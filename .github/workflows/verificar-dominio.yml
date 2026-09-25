@@ -1,0 +1,36 @@
+name: verificar-dominio
+
+# Confere, de fora, se demophobia.com.br já aponta para o site: nameservers,
+# DNS, HTTPS e o cabeçalho de indexação. Só lê; não publica nada.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Nameservers (o registro.br já delegou para a Cloudflare?)
+        run: |
+          dig +short NS demophobia.com.br @1.1.1.1 || true
+          echo "--- direto no .br:"
+          dig +short NS demophobia.com.br @a.dns.br || true
+
+      - name: DNS do site (Custom domains no Pages já criou os registros?)
+        run: |
+          for h in demophobia.com.br www.demophobia.com.br; do
+            echo "$h:"; dig +short "$h" @1.1.1.1 || true
+          done
+
+      - name: HTTPS e indexação
+        run: |
+          for u in https://demophobia.com.br/ https://www.demophobia.com.br/ https://demophobia.com.br/imprensa/; do
+            echo "== $u"
+            curl -sS -o /dev/null -w "status %{http_code}\n" --max-time 20 "$u" || echo "sem resposta"
+            curl -sSI --max-time 20 "$u" 2>/dev/null | tr -d '\r' | grep -iE '^(x-robots-tag|server|location):' || true
+          done
+          echo "== robots.txt servido"
+          curl -sS --max-time 20 https://demophobia.com.br/robots.txt || echo "sem resposta"
