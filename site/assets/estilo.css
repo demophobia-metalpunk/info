@@ -183,7 +183,7 @@ section.bloco + section.bloco { border-top: 1px solid var(--rule); }
 .formacao li { background: var(--bg); padding: 18px 20px; }
 .formacao .n { font: 400 22px/1.1 var(--display); text-transform: uppercase; display: block; }
 .formacao .f { font: 400 13px/1.4 var(--type); color: var(--blood-hi); text-transform: uppercase; letter-spacing: .06em; }
-.linha-tempo { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.linha-tempo { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
 .linha-tempo li { background: var(--bg-2); padding: 30px 26px 32px; }
 .linha-tempo .ano { font: 400 58px/1 var(--display); color: var(--blood-hi); display: block; margin-bottom: 14px; }
 .linha-tempo h3 { font-size: 22px; margin-bottom: 10px; }
@@ -343,3 +343,8 @@ span.falta { display: inline-block; margin: 0; padding: 4px 8px; }
 .clipping a::after { content: " ↗"; color: var(--blood-hi); }
 .clipping p { margin: 6px 0 0; font-size: 15px; color: var(--bone-dim); }
 @media (max-width: 560px) { .clipping li { grid-template-columns: 1fr; gap: 6px; } }
+
+/* trajetória: o que vem */
+.linha-tempo li.futuro { background: var(--bg); outline: 1px dashed var(--blood); outline-offset: -8px; }
+.linha-tempo li.futuro .ano { -webkit-text-stroke: 1px var(--blood-hi); color: transparent; }
+.em-breve { display: inline-block; font: 400 12px/1 var(--type); text-transform: uppercase; letter-spacing: .1em; color: var(--bone); background: var(--blood); padding: 6px 8px; margin: -4px 0 12px; }

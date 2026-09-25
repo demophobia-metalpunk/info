@@ -52,8 +52,8 @@ jobs:
       # sem Pillow o build falha nos cartões og; instalar sempre
       - run: python3 -m pip install --quiet pillow
 
-      - name: Miniaturas dos vídeos
-        run: python3 site/miniaturas.py
+      - name: Miniaturas e capas do streaming
+        run: python3 site/baixar_midias.py
 
       - name: Construir
         run: |

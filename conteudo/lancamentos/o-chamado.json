@@ -22,5 +22,14 @@
   "videos": [
     "o-chamado"
   ],
-  "texto_html": "<p>Depois de dois anos de hiato por conta da pandemia, a banda retomou as atividades com <em>O Chamado</em>. A faixa revisita um episódio importante da história brasileira: a luta de trabalhadoras e trabalhadores da região do ABC Paulista entre 1979 e 1981 por melhor qualidade de vida e maior participação na vida política do país.</p>"
+  "texto_html": "<p>Depois de dois anos de hiato por conta da pandemia, a banda retomou as atividades com <em>O Chamado</em>. A faixa revisita um episódio importante da história brasileira: a luta de trabalhadoras e trabalhadores da região do ABC Paulista entre 1979 e 1981 por melhor qualidade de vida e maior participação na vida política do país.</p>",
+  "capa_fonte": [
+    "https://open.spotify.com/album/0r1bxupWlLLDm7QQAlyHZ9"
+  ],
+  "links": [
+    {
+      "rotulo": "Ouvir no Spotify",
+      "url": "https://open.spotify.com/album/0r1bxupWlLLDm7QQAlyHZ9"
+    }
+  ]
 }

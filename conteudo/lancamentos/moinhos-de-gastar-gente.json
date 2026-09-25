@@ -2,7 +2,7 @@
   "slug": "moinhos-de-gastar-gente",
   "titulo": "Moinhos de Gastar Gente",
   "tipo": "ep",
-  "data": "2019-04",
+  "data": "2019-04-26",
   "linha_fina": "EP de estreia, lançado com o apoio dos selos Brutal Grind, Die Hard Records e Manaós.",
   "capa": null,
   "faixas": [
@@ -41,5 +41,19 @@
     "moinhos-de-gastar-gente",
     "ficcao-em-horario-nobre"
   ],
-  "texto_html": "<p>Disponível em todas as plataformas digitais, para download gratuito no Bandcamp e em CD físico.</p>"
+  "texto_html": "<p>Disponível em todas as plataformas digitais, para download gratuito no Bandcamp e em CD físico.</p>",
+  "capa_fonte": [
+    "https://open.spotify.com/album/7qki7mGC4R2tBvtgi9HFeM",
+    "https://demophobia.bandcamp.com/album/moinhos-de-gastar-gente"
+  ],
+  "links": [
+    {
+      "rotulo": "Ouvir no Bandcamp",
+      "url": "https://demophobia.bandcamp.com/album/moinhos-de-gastar-gente"
+    },
+    {
+      "rotulo": "Ouvir no Spotify",
+      "url": "https://open.spotify.com/album/7qki7mGC4R2tBvtgi9HFeM"
+    }
+  ]
 }

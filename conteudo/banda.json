@@ -79,7 +79,19 @@
     {
       "ano": "2024",
       "titulo": "Perversidade e Violência",
-      "texto": "Lançamento do primeiro álbum completo em 1º de maio, precedido pelos singles “Sem Tempo” e “Nunca se Renda”."
+      "texto": "Lançamento do primeiro álbum completo em 1º de maio, precedido pelos singles “Sem Tempo” e “Nunca se Renda” e seguido pelos clipes de “Perversidade e Violência” e “Sempre Desobedecer”."
+    },
+    {
+      "ano": "2026",
+      "titulo": "Dois singles",
+      "texto": "Dois singles inéditos chegam ainda este ano, abrindo o caminho para o próximo disco.",
+      "futuro": true
+    },
+    {
+      "ano": "2027",
+      "titulo": "Novo EP",
+      "texto": "O próximo EP da Demophobia, em produção.",
+      "futuro": true
     }
   ],
   "contato": {

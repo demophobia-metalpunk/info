@@ -394,8 +394,17 @@ class Site:
 
     # ---- componentes
 
+    def capa_de(self, l: dict) -> dict | None:
+        """A capa declarada, ou a que site/baixar_midias.py trouxe do streaming (capa_fonte)."""
+        if l.get("capa"):
+            return l["capa"]
+        baixada = f"capas/{l['slug']}.jpg"
+        if l.get("capa_fonte") and self.m.existe(baixada):
+            return {"arquivo": baixada, "descricao": f"Capa de {l['titulo']}, da Demophobia"}
+        return None
+
     def capa_ou_nome(self, l: dict, origem: str) -> str:
-        capa = l.get("capa")
+        capa = self.capa_de(l)
         if capa:
             return f'<img src="{self.m.url(capa["arquivo"], origem)}" alt="{esc(capa["descricao"])}" loading="lazy" width="1000" height="1000">'
         return f'<div class="sem-capa" role="img" aria-label="{esc(l["titulo"])}">{esc(l["titulo"])}<small>{esc(TIPOS_LANCAMENTO[l["tipo"]])} · {l["_data"].year}</small></div>'
@@ -412,7 +421,7 @@ class Site:
 </a>"""
 
     def miniatura_video(self, v: dict) -> str:
-        """Miniatura local se existir (baixada por site/miniaturas.py); senão a capa do lançamento; senão a foto da banda."""
+        """Miniatura local se existir (baixada por site/baixar_midias.py); senão a capa do lançamento; senão a foto da banda."""
         propria = f"videos/{v['youtube']}.jpg"
         if self.m.existe(propria):
             return self.m.url(propria, f"videos/{v['slug']}.json")
@@ -609,6 +618,12 @@ class Site:
 </a>""" for i in v["itens"])
         return f'<section class="bloco"><div class="wrap"><h2>{esc(v.get("titulo", ""))}</h2><div class="grade">{cards}</div></div></section>'
 
+    def item_trajetoria(self, t: dict) -> str:
+        futuro = t.get("futuro")
+        classe = ' class="futuro"' if futuro else ""
+        selo = '<span class="em-breve">Em breve</span>' if futuro else ""
+        return f'<li{classe}><span class="ano">{esc(t["ano"])}</span>{selo}<h3>{esc(t["titulo"])}</h3><p>{esc(t["texto"])}</p></li>'
+
     def banda(self):
         b = self.a.banda
         foto = b["foto"]
@@ -619,7 +634,7 @@ class Site:
                 f'<span class="termo"><span>{esc(p["termo"])}</span><small>{esc(p["sentido"])}</small></span>' for p in etimo["partes"])
             eq = f'<div class="etimo"><div class="eq">{partes}</div><p>{esc(etimo["texto"])}</p></div>'
         formacao = "".join(f'<li><span class="n">{esc(p["nome"])}</span><span class="f">{esc(p["funcao"])}</span></li>' for p in b["formacao"])
-        tempo = "".join(f'<li><span class="ano">{esc(t["ano"])}</span><h3>{esc(t["titulo"])}</h3><p>{esc(t["texto"])}</p></li>' for t in b.get("trajetoria", []))
+        tempo = "".join(self.item_trajetoria(t) for t in b.get("trajetoria", []))
         corpo = f"""{self.cabeca("A banda", "Demophobia", b["linha_fina"])}
 <section class="bloco"><div class="wrap">
   <figure class="foto-banda"><img src="{self.m.url(foto["arquivo"], "banda.json")}" alt="{esc(foto["descricao"])}" width="2000" height="1125"></figure>
@@ -697,15 +712,16 @@ class Site:
               "@type": "MusicAlbum" if l["tipo"] in ("album", "ep") else "MusicRecording",
               "name": l["titulo"], "byArtist": {"@type": "MusicGroup", "name": "Demophobia", "url": DOMINIO + "/"},
               "datePublished": l["data"], "description": l["linha_fina"], "url": f"{DOMINIO}/discografia/{l['slug']}/"}
-        if l.get("capa"):
-            ld["image"] = DOMINIO + "/midias/" + l["capa"]["arquivo"]
+        if self.capa_de(l):
+            ld["image"] = DOMINIO + "/midias/" + self.capa_de(l)["arquivo"]
         if l["tipo"] in ("album", "ep"):
             ld["albumProductionType"] = "https://schema.org/StudioAlbum"
             ld["albumReleaseType"] = "https://schema.org/AlbumRelease" if l["tipo"] == "album" else "https://schema.org/EPRelease"
             if l.get("faixas"):
                 ld["numTracks"] = len(l["faixas"])
                 ld["track"] = [{"@type": "MusicRecording", "position": i + 1, "name": f["titulo"]} for i, f in enumerate(l["faixas"])]
-        og = self.og.gerar(f"discografia-{l['slug']}", l["titulo"], f"{tipo} · {l['_data'].year}", l["capa"]["arquivo"] if l.get("capa") else None)
+        capa = self.capa_de(l)
+        og = self.og.gerar(f"discografia-{l['slug']}", l["titulo"], f"{tipo} · {l['_data'].year}", capa["arquivo"] if capa else None)
         self.pagina(f"/discografia/{l['slug']}/", l["titulo"], l["linha_fina"], corpo, og=og, ld=[ld],
                     ativo="/discografia/", lastmod=l["_data"])
 
