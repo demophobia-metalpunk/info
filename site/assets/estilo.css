@@ -316,3 +316,16 @@ span.falta { display: inline-block; margin: 0; padding: 4px 8px; }
   .fotos-palco { grid-template-columns: repeat(2, 1fr); }
   .ficha { grid-template-columns: 1fr; }
 }
+
+/* cartazes: cada formato na sua grade, sem corte */
+.cartazes .galeria + .galeria { margin-top: 8px; }
+.galeria.cartazes-largos { grid-template-columns: repeat(2, 1fr); }
+.galeria.cartazes-largos button { aspect-ratio: 1617 / 729; }
+.galeria.cartazes-verticais { grid-template-columns: repeat(7, 1fr); }
+.galeria.cartazes-verticais button { aspect-ratio: 657 / 729; }
+@media (max-width: 860px) { .galeria.cartazes-verticais { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 560px) { .galeria.cartazes-largos { grid-template-columns: 1fr; } .galeria.cartazes-verticais { grid-template-columns: repeat(2, 1fr); } }
+
+/* citação em destaque */
+.citacao { margin: 40px 0 8px; padding: 0; font: 400 clamp(28px, 3.2vw, 40px)/1.05 var(--display); text-transform: uppercase; color: var(--bone); }
+.citacao::before { content: "“"; display: block; color: var(--blood-hi); font-size: 1.6em; line-height: .6; margin-bottom: 8px; }

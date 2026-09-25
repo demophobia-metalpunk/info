@@ -106,5 +106,37 @@
       "rotulo": "Todos os links",
       "url": "https://linktr.ee/demophobia"
     }
-  ]
+  ],
+  "vitrine": {
+    "titulo": "Do disco",
+    "itens": [
+      {
+        "titulo": "Sem Tempo",
+        "etiqueta": "Single e clipe",
+        "capa": {
+          "arquivo": "capas/sem-tempo.jpg",
+          "descricao": "Capa do single Sem Tempo"
+        },
+        "link": "/discografia/sem-tempo/"
+      },
+      {
+        "titulo": "Nunca se Renda",
+        "etiqueta": "Single e lyric video",
+        "capa": {
+          "arquivo": "capas/nunca-se-renda.jpg",
+          "descricao": "Capa do single Nunca se Renda"
+        },
+        "link": "/discografia/nunca-se-renda/"
+      },
+      {
+        "titulo": "Sempre Desobedecer",
+        "etiqueta": "Homenagem a Belchior",
+        "capa": {
+          "arquivo": "capas/sempre-desobedecer.jpg",
+          "descricao": "Arte de Sempre Desobedecer: a banda num corredor de concreto"
+        },
+        "link": "/discografia/perversidade-e-violencia/"
+      }
+    ]
+  }
 }

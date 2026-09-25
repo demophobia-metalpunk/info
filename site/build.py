@@ -464,6 +464,17 @@ class Site:
             for i in itens)
         return f'<div class="galeria {classe}" data-galeria>{botoes}</div>'
 
+    def cartazes(self, itens: list[dict]) -> str:
+        """Largos numa grade de 2 colunas, verticais numa de 7: cada formato sem corte."""
+        largos = [i for i in itens if i.get("formato") == "largo"]
+        verticais = [i for i in itens if i.get("formato") != "largo"]
+        html_ = ""
+        if largos:
+            html_ += self.galeria(largos, "cartazes-largos", "galeria.json").replace(' data-galeria>', '>')
+        if verticais:
+            html_ += self.galeria(verticais, "cartazes-verticais", "galeria.json").replace(' data-galeria>', '>')
+        return f'<div class="cartazes" data-galeria>{html_}</div>'
+
     def cartao_noticia(self, n: dict) -> str:
         img = ""
         if n.get("capa"):
@@ -541,6 +552,7 @@ class Site:
   <div><dt>Som</dt><dd>Thrash · Death · Punk</dd></div>
   <div><dt>Discografia</dt><dd>{len(a.lancamentos)} lançamentos</dd></div>
 </dl></div></div>
+{self.vitrine()}
 <section class="bloco"><div class="wrap">
   <div class="topo-bloco"><h2>Próximos shows</h2><a class="ver-tudo" href="/shows/">Agenda e histórico</a></div>
   {shows}
@@ -557,6 +569,16 @@ class Site:
 {loja}"""
         og = self.og.gerar("home", l["titulo"], "Demophobia · " + carimbo, l["capa"]["arquivo"] if l.get("capa") else b["foto"]["arquivo"])
         self.pagina("/", "Demophobia", b["linha_fina"], corpo, og=og, ld=[self.ld_banda()])
+
+    def vitrine(self) -> str:
+        v = self.a.banda.get("vitrine")
+        if not v or not v.get("itens"):
+            return ""
+        cards = "".join(f"""<a class="cartao" href="{esc(i["link"])}">
+  <div class="img"><img src="{self.m.url(i["capa"]["arquivo"], "banda.json")}" alt="{esc(i["capa"]["descricao"])}" loading="lazy"></div>
+  <div class="meta"><h3>{esc(i["titulo"])}</h3><span class="etiqueta">{esc(i["etiqueta"])}</span></div>
+</a>""" for i in v["itens"])
+        return f'<section class="bloco"><div class="wrap"><h2>{esc(v.get("titulo", ""))}</h2><div class="grade">{cards}</div></div></section>'
 
     def banda(self):
         b = self.a.banda
@@ -631,6 +653,7 @@ class Site:
     <h1 class="pagina">{esc(l["titulo"])}</h1>
     <p class="lead dim">{esc(l["linha_fina"])}</p>
     <div class="btns">{links}{album}</div>
+    {f'<blockquote class="citacao">{esc(l["citacao"])}</blockquote>' if l.get("citacao") else ""}
     {texto}
   </div>
 </div></section>
@@ -674,7 +697,7 @@ class Site:
   <h2>No palco</h2>{self.galeria(g.get("ao_vivo", []), "", "galeria.json")}
 </div></section>
 <section class="bloco"><div class="wrap">
-  <h2>Cartazes</h2>{self.galeria(g.get("cartazes", []), "cartazes", "galeria.json")}
+  <h2>Cartazes</h2>{self.cartazes(g.get("cartazes", []))}
 </div></section>"""
         foto = g["ao_vivo"][0]["arquivo"] if g.get("ao_vivo") else None
         og = self.og.gerar("shows", "Shows", "Demophobia ao vivo", foto)
