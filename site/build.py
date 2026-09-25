@@ -166,6 +166,14 @@ class Acervo:
         self.noticias = sorted([n for n in todas if n.get("publicado", True) and n["_data"] <= hoje],
                                key=lambda n: n["_data"], reverse=True)
 
+        # na mídia: o que saiu sobre a banda em outros veículos (links para fora)
+        self.midia = self._pasta("na-midia", ["slug", "titulo", "veiculo", "url", "data", "tipo"])
+        for m in self.midia:
+            m["_data"], m["_prec"] = parse_data(m["data"], f"na-midia/{m['slug']}.json")
+            if m.get("sobre") and m["sobre"] not in self.lanc_por_slug:
+                raise ErroDeConteudo(f"na-midia/{m['slug']}.json: sobre '{m['sobre']}' não existe em lancamentos/")
+        self.midia.sort(key=lambda m: (m["_data"], m["slug"]), reverse=True)
+
         produtos = self._pasta("loja", ["slug", "titulo", "linha_fina", "fotos"])
         self.produtos = [p for p in produtos if p.get("publicado", True)]
         self.produtos.sort(key=lambda p: (p.get("ordem", 999), p["titulo"]))
@@ -475,6 +483,25 @@ class Site:
             html_ += self.galeria(verticais, "cartazes-verticais", "galeria.json").replace(' data-galeria>', '>')
         return f'<div class="cartazes" data-galeria>{html_}</div>'
 
+    def data_midia(self, m: dict) -> str:
+        txt = data_extenso(m["_data"], m["_prec"])
+        if not m.get("data_confirmada"):
+            txt = "c. " + txt
+        return txt
+
+    def item_midia(self, m: dict, com_resumo: bool = True) -> str:
+        idioma = {"en": "em inglês", "es": "em espanhol"}.get(m.get("idioma", "pt"), "")
+        meta = " · ".join(x for x in [esc(m["tipo"]), esc(idioma)] if x)
+        resumo = f'<p>{esc(m["resumo"])}</p>' if com_resumo and m.get("resumo") else ""
+        return f"""<li>
+  <span class="quando">{esc(self.data_midia(m))}</span>
+  <div><span class="veiculo">{esc(m["veiculo"])}</span><span class="tipo">{meta}</span>
+  <a href="{esc(m["url"])}" target="_blank" rel="noopener">{esc(m["titulo"])}</a>{resumo}</div>
+</li>"""
+
+    def lista_midia(self, itens: list[dict], com_resumo: bool = True) -> str:
+        return '<ul class="clipping">' + "".join(self.item_midia(m, com_resumo) for m in itens) + "</ul>"
+
     def cartao_noticia(self, n: dict) -> str:
         img = ""
         if n.get("capa"):
@@ -522,10 +549,12 @@ class Site:
         else:
             shows = f'<p class="vazio">Nenhuma data anunciada agora. Para levar a Demophobia para o seu evento, escreva para <a href="mailto:{esc(b["contato"]["email"])}">{esc(b["contato"]["email"])}</a>.</p>'
         noticias = ""
-        if a.noticias:
+        if a.midia or a.noticias:
+            notas = f'<div class="grade" style="margin-top:40px">{"".join(self.cartao_noticia(n) for n in a.noticias[:3])}</div>' if a.noticias else ""
             noticias = f"""<section class="bloco alt"><div class="wrap">
-  <div class="topo-bloco"><h2>Notícias</h2><a class="ver-tudo" href="/noticias/">Todas as notícias</a></div>
-  <div class="grade">{"".join(self.cartao_noticia(n) for n in a.noticias[:3])}</div>
+  <div class="topo-bloco"><h2>Na mídia</h2><a class="ver-tudo" href="/noticias/">Todas as matérias</a></div>
+  {self.lista_midia(a.midia[:4], com_resumo=False)}
+  {notas}
 </div></section>"""
         loja = ""
         if a.produtos:
@@ -718,14 +747,26 @@ class Site:
                     og=og, ld=ld, ativo="/videos/")
 
     def noticias(self):
+        """Na mídia (o mapeamento do que saiu sobre a banda) + Da banda (notas próprias, paginadas)."""
         a = self.a
         total = len(a.noticias)
         paginas = max(1, math.ceil(total / POR_PAGINA))   # nunca zero, nem quando o total for múltiplo exato
-        og = self.og.gerar("noticias", "Notícias", "Demophobia", self.a.banda["foto"]["arquivo"])
+        og = self.og.gerar("noticias", "Na mídia", "Demophobia · Notícias", self.a.banda["foto"]["arquivo"])
+        veiculos = sorted({m["veiculo"] for m in a.midia})
+        midia = ""
+        if a.midia:
+            por_ano: dict[int, list] = {}
+            for m in a.midia:
+                por_ano.setdefault(m["_data"].year, []).append(m)
+            anos = "".join(f'<h3 class="ano-midia">{ano}</h3>{self.lista_midia(itens)}' for ano, itens in por_ano.items())
+            midia = f"""<section class="bloco"><div class="wrap">
+  <div class="topo-bloco"><h2>Na mídia</h2><p class="dim" style="margin:0">{len(a.midia)} matérias em {len(veiculos)} veículos</p></div>
+  {anos}
+</div></section>"""
         for n_pag in range(1, paginas + 1):
             fatia = a.noticias[(n_pag - 1) * POR_PAGINA: n_pag * POR_PAGINA]
             rota = "/noticias/" if n_pag == 1 else f"/noticias/pagina/{n_pag}/"
-            lista = f'<div class="grade">{"".join(self.cartao_noticia(n) for n in fatia)}</div>' if fatia else '<p class="vazio">Nenhuma notícia publicada ainda.</p>'
+            lista = f'<div class="grade">{"".join(self.cartao_noticia(n) for n in fatia)}</div>' if fatia else '<p class="vazio">Nenhuma nota publicada ainda.</p>'
             pag = ""
             if paginas > 1:
                 itens = []
@@ -734,10 +775,12 @@ class Site:
                     itens.append(f'<span aria-current="page">{i}</span>' if i == n_pag else f'<a href="{href}">{i}</a>')
                 pag = f'<nav class="paginacao" aria-label="Páginas">{"".join(itens)}</nav>'
             titulo = "Notícias" if n_pag == 1 else f"Notícias · página {n_pag}"
-            corpo = f"""{self.cabeca("Notícias", "Notícias", "Lançamentos, shows e novidades da Demophobia.")}
-<section class="bloco"><div class="wrap">{lista}{pag}</div></section>"""
-            self.pagina(rota, titulo, "Lançamentos, shows e novidades da Demophobia.", corpo, og=og,
-                        ativo="/noticias/", lastmod=fatia[0]["_data"] if fatia else None)
+            da_banda = f'<section class="bloco alt"><div class="wrap"><h2>Da banda</h2>{lista}{pag}</div></section>'
+            corpo = self.cabeca("Notícias", "Notícias", "O que a imprensa especializada publicou sobre a Demophobia, e as notas da própria banda.")
+            corpo += (midia if n_pag == 1 else "") + da_banda
+            ultima = max([x["_data"] for x in fatia] + ([a.midia[0]["_data"]] if a.midia and n_pag == 1 else []), default=None)
+            self.pagina(rota, titulo, "O que a imprensa especializada publicou sobre a Demophobia, e as notas da própria banda.",
+                        corpo, og=og, ativo="/noticias/", lastmod=ultima)
         for n in a.noticias:
             self.noticia(n)
 
@@ -847,6 +890,21 @@ class Site:
         tag = "span" if inline else "div"
         return f'<{tag} class="falta">{esc(texto)}</{tag}>'
 
+    def na_imprensa(self) -> str:
+        """Bloco da página de contratação: veículos e matérias em destaque."""
+        a = self.a
+        if not a.midia:
+            return ""
+        destaques = [m for m in a.midia if m.get("destaque")] or a.midia[:5]
+        veiculos = sorted({m["veiculo"] for m in a.midia})
+        nomes = "".join(f"<span>{esc(v)}</span>" for v in veiculos)
+        return f"""<div style="margin-top:48px">
+  <h3 style="font-size:28px;margin-bottom:16px">Na imprensa</h3>
+  <div class="nomes" style="margin-bottom:24px">{nomes}</div>
+  {self.lista_midia(destaques)}
+  <p style="margin-top:16px"><a class="ver-tudo" href="/noticias/">Todas as {len(a.midia)} matérias</a></p>
+</div>"""
+
     def imprensa(self):
         """Imprensa e contratação. Página de bastidor: fora do menu, do sitemap, do llms.txt e do
         index.json, e sempre com noindex. Segue a ordem em que o produtor decide."""
@@ -903,6 +961,7 @@ class Site:
     <div><h3>Participações</h3><ul>{particip}</ul></div>
   </div>
   {numeros}
+  {self.na_imprensa()}
 </div></section>"""
 
         # 4. agora
@@ -944,7 +1003,7 @@ class Site:
   <div>
     {lista}
     {"" if faixas else self.falta("As 3 músicas que abrem a página, na ordem de impacto (não na ordem do disco)")}
-    {"" if ou.get("spotify_confirmado") else self.falta("Confirmar se o álbum voltou ao Spotify. O CD Baby avisou em 2025 que ele foi removido; se ainda estiver fora, o link não pode ir para o produtor")}
+    {"" if ou.get("spotify_confirmado") else self.falta("Confirmar se o álbum está no Spotify. O CD Baby avisou em 2025 que ele foi removido; a busca de hoje ainda acha a página do álbum (open.spotify.com/album/2nF5AjsVZUFBGsT5VR7iUe), mas não consegui abrir para conferir")}
     <div class="btns" style="margin-top:20px">{f'<a class="btn primario" href="{esc(link["url"])}" target="_blank" rel="noopener">{self.icone("play")}{esc(link["rotulo"])}</a>' if link else ""}<a class="btn fantasma" href="/discografia/">Discografia completa</a></div>
   </div>
 </div></section>"""
@@ -1051,6 +1110,8 @@ class Site:
                    "url": "/shows/", "cidade": s.get("cidade")} for s in a.shows]
         itens += [{"tipo": "video", "slug": v["slug"], "titulo": v["titulo"], "data": str(v["ano"]),
                    "url": "/videos/", "youtube": v["youtube"]} for v in a.videos]
+        itens += [{"tipo": "midia", "slug": m["slug"], "titulo": m["titulo"], "veiculo": m["veiculo"], "data": m["data"],
+                   "url": "/noticias/", "externa": m["url"], "categoria": m["tipo"]} for m in a.midia]
         itens += [{"tipo": "produto", "slug": p["slug"], "titulo": p["titulo"], "url": f"/loja/{p['slug']}/",
                    "preco": p.get("preco"), "disponivel": p.get("disponivel", True)} for p in a.produtos]
         doc = {"contrato": CONTRATO_INDEX, "gerado_em": dt.datetime.now(FUSO).isoformat(timespec="seconds"),
@@ -1059,7 +1120,7 @@ class Site:
         assert doc["total"] == len(doc["itens"]), "index.json: total diferente da lista"
         for it in itens:
             assert it["url"].startswith("/") and not it["url"].startswith("/imprensa"), f"index.json: url inválida {it}"
-            assert it["tipo"] in {"lancamento", "noticia", "show", "video", "produto"}, f"index.json: tipo inválido {it}"
+            assert it["tipo"] in {"lancamento", "noticia", "show", "video", "produto", "midia"}, f"index.json: tipo inválido {it}"
         self.escrever("/index.json", json.dumps(doc, ensure_ascii=False, indent=1) + "\n")
 
     def sitemap(self):
@@ -1089,6 +1150,9 @@ class Site:
         if a.noticias:
             l += ["", "## Notícias", ""]
             l += [f"- [{n['titulo']}]({DOMINIO}/noticias/{n['slug']}/): {n['data']}. {n['linha_fina']}" for n in a.noticias]
+        if a.midia:
+            l += ["", "## Na mídia", ""]
+            l += [f"- [{m['titulo']}]({m['url']}): {m['veiculo']}, {m['data']}." for m in a.midia]
         l += ["", f"Índice completo em JSON: {DOMINIO}/index.json", ""]
         self.escrever("/llms.txt", "\n".join(l))
 
