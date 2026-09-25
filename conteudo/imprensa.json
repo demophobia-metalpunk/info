@@ -10,6 +10,10 @@
   "prova": {
     "eventos": [
       {
+        "nome": "Basement Cultural, Curitiba (PR)",
+        "detalhe": "25 de julho de 2025, com Vulture, Dark Tower, Ereboros, Orthostat e Cülpado"
+      },
+      {
         "nome": "Masters of Noise",
         "detalhe": "2 de dezembro de 2023, maior evento underground da América Latina"
       },
@@ -107,15 +111,15 @@
     "raio": "Shows aos domingos: até 150 km de São Paulo",
     "tempo_set": null,
     "pessoas_viajam": null,
-    "backline": null,
-    "rider_pdf": null,
-    "mapa_palco": null,
-    "formacao_confirmada": false
+    "backline": "Pelo rider: 3 microfones Shure SM58; baixo em Hartke, Gallien-Krueger ou Fender com duas caixas 4x10; guitarra em 2 cabeçotes high-gain (Peavey 5150 ou Mesa Boogie Dual Rectifier) com duas 4x12 cada; bateria com bumbo 22\", tons 10\" e 12\" e surdo 16\".",
+    "rider_pdf": "imprensa/demophobia-rider-e-mapa-de-palco.pdf",
+    "mapa_palco": "imprensa/demophobia-rider-e-mapa-de-palco.pdf",
+    "formacao_confirmada": false,
+    "rider_confirmado": false
   },
   "material": {
     "release_curto": "A Demophobia é uma banda de metal punk do ABC Paulista, formada em 2018. Mistura thrash, death metal e punk com letras em português sobre a formação social brasileira. Lançou o EP Moinhos de Gastar Gente (2019), os singles Modus Operandi (2020) e O Chamado (2022) e o álbum Perversidade e Violência (2024), com participações de André Alves (Statues on Fire) e Henrick Magalhães (ROT). Já tocou no Masters of Noise e dividiu palco com Crypta, Manger Cadavre?, Test e ROT.",
     "release_atualizado": false,
-    "logo": null,
     "credito_fotos": null,
     "downloads": [
       {
@@ -132,6 +136,27 @@
         "arquivo": "imprensa/demophobia-perversidade-e-violencia-capa.jpg",
         "miniatura": "capas/perversidade-e-violencia.jpg",
         "rotulo": "Capa do álbum 2024"
+      }
+    ],
+    "logos": [
+      {
+        "arquivo": "imprensa/demophobia-logo-branco.png",
+        "rotulo": "Logo branco",
+        "formato": "PNG transparente",
+        "fundo": "escuro"
+      },
+      {
+        "arquivo": "imprensa/demophobia-logo-preto.png",
+        "rotulo": "Logo preto",
+        "formato": "PNG transparente",
+        "fundo": "claro"
+      },
+      {
+        "arquivo": "imprensa/demophobia-logo-vetor.eps",
+        "rotulo": "Logo em vetor",
+        "formato": "EPS",
+        "previa": "imprensa/demophobia-logo-branco.png",
+        "fundo": "escuro"
       }
     ]
   },

@@ -1032,10 +1032,13 @@ class Site:
             return f"<div><dt>{esc(rotulo)}</dt><dd>{self.falta(falta_txt, inline=True) or '—'}</dd></div>"
         formacao = ", ".join(f'{p["nome"]} ({p["funcao"].lower()})' for p in b["formacao"])
         docs_tec = ""
-        if tec.get("rider_pdf"):
-            docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["rider_pdf"], o)}" download>{self.icone("dl")}Rider técnico</a>'
-        if tec.get("mapa_palco"):
-            docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["mapa_palco"], o)}" download>{self.icone("dl")}Mapa de palco</a>'
+        if tec.get("rider_pdf") and tec.get("rider_pdf") == tec.get("mapa_palco"):
+            docs_tec = f'<a class="btn primario" href="{self.m.url(tec["rider_pdf"], o)}" download>{self.icone("dl")}Rider e mapa de palco (PDF)</a>'
+        else:
+            if tec.get("rider_pdf"):
+                docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["rider_pdf"], o)}" download>{self.icone("dl")}Rider técnico</a>'
+            if tec.get("mapa_palco"):
+                docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["mapa_palco"], o)}" download>{self.icone("dl")}Mapa de palco</a>'
         corpo += f"""<section class="bloco alt"><div class="wrap">
   <p class="kicker">Técnico</p><h2>Para montar o show</h2>
   <dl class="ficha">
@@ -1048,6 +1051,7 @@ class Site:
   </dl>
   <div class="btns" style="margin-top:24px">{docs_tec}</div>
   {"" if tec.get("rider_pdf") and tec.get("mapa_palco") else self.falta("Rider técnico e mapa de palco em PDF. Se não existirem, mandar a lista de equipamento e eu monto")}
+  {"" if not tec.get("rider_pdf") or tec.get("rider_confirmado") else self.falta("O rider é de 2022 (enviado ao Coletivo Rock ABC). Confirmar se o equipamento continua o mesmo")}
 </div></section>"""
 
         # 8. material
@@ -1061,10 +1065,12 @@ class Site:
   <img src="{self.m.url(d["miniatura"], o)}" alt="" loading="lazy">
   <div class="corpo"><div><strong>{esc(d["rotulo"])}</strong><small>JPG · {dims} · {arq.stat().st_size / 1_000_000:.1f} MB</small></div>{self.icone("dl")}</div>
 </a>"""
-        if mat.get("logo"):
-            downloads += f"""<a class="dl" href="{self.m.url(mat["logo"], o)}" download>
-  <img src="{self.m.url(mat["logo"], o)}" alt="" loading="lazy" style="object-fit:contain;padding:24px">
-  <div class="corpo"><div><strong>Logo</strong><small>PNG transparente</small></div>{self.icone("dl")}</div>
+        for lg in mat.get("logos", []):
+            previa = lg.get("previa") or lg["arquivo"]
+            fundo = "#e9e1d0" if lg.get("fundo") == "claro" else "#0b0a09"
+            downloads += f"""<a class="dl" href="{self.m.url(lg["arquivo"], o)}" download>
+  <img src="{self.m.url(previa, o)}" alt="" loading="lazy" style="object-fit:contain;padding:28px;background:{fundo}">
+  <div class="corpo"><div><strong>{esc(lg["rotulo"])}</strong><small>{esc(lg["formato"])}</small></div>{self.icone("dl")}</div>
 </a>"""
         credito = f'<p class="dim">Fotos: {esc(mat["credito_fotos"])}</p>' if mat.get("credito_fotos") else self.falta("Crédito das fotos (quem fotografou?)")
         corpo += f"""<section class="bloco"><div class="wrap">
@@ -1074,7 +1080,7 @@ class Site:
   <button class="copiar" data-copiar="release-curto">Copiar release</button>
   {"" if mat.get("release_atualizado") else self.falta("Atualizar o release com os singles de 2026 e o EP de 2027 quando tiverem nome")}
   <div class="downloads" style="margin-top:40px">{downloads}</div>
-  {"" if mat.get("logo") else self.falta("Logo em PNG transparente (branco e preto)")}
+  {"" if mat.get("logos") else self.falta("Logo em PNG transparente (branco e preto)")}
   {credito}
 </div></section>"""
 

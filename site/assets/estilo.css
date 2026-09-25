@@ -183,7 +183,7 @@ section.bloco + section.bloco { border-top: 1px solid var(--rule); }
 .formacao li { background: var(--bg); padding: 18px 20px; }
 .formacao .n { font: 400 22px/1.1 var(--display); text-transform: uppercase; display: block; }
 .formacao .f { font: 400 13px/1.4 var(--type); color: var(--blood-hi); text-transform: uppercase; letter-spacing: .06em; }
-.linha-tempo { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.linha-tempo { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
 .linha-tempo li { background: var(--bg-2); padding: 30px 26px 32px; }
 .linha-tempo .ano { font: 400 58px/1 var(--display); color: var(--blood-hi); display: block; margin-bottom: 14px; }
 .linha-tempo h3 { font-size: 22px; margin-bottom: 10px; }
