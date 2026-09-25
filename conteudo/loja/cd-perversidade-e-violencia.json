@@ -1,0 +1,21 @@
+{
+  "slug": "cd-perversidade-e-violencia",
+  "titulo": "CD Perversidade e Violência",
+  "publicado": false,
+  "categoria": "Música",
+  "linha_fina": "O primeiro álbum da Demophobia em CD físico, com encarte.",
+  "preco": null,
+  "fotos": [
+    {
+      "arquivo": "capas/perversidade-e-violencia.jpg",
+      "descricao": "Capa do CD Perversidade e Violência"
+    }
+  ],
+  "variacoes": [],
+  "disponivel": true,
+  "compra": {
+    "tipo": "link",
+    "url": null
+  },
+  "descricao_html": "<p>Dez faixas, fabricado pela Kyrios CDs.</p>"
+}

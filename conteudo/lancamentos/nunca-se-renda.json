@@ -1,0 +1,15 @@
+{
+  "slug": "nunca-se-renda",
+  "titulo": "Nunca se Renda",
+  "tipo": "single",
+  "data": "2024",
+  "linha_fina": "Segundo single de Perversidade e Violência, lançado com lyric video.",
+  "capa": {
+    "arquivo": "capas/nunca-se-renda.jpg",
+    "descricao": "Capa do single Nunca se Renda: ilustração em alto contraste de um homem erguendo uma bandeira"
+  },
+  "do_album": "perversidade-e-violencia",
+  "videos": [
+    "nunca-se-renda"
+  ]
+}

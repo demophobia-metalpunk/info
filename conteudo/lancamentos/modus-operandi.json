@@ -1,0 +1,25 @@
+{
+  "slug": "modus-operandi",
+  "titulo": "Modus Operandi",
+  "tipo": "single",
+  "data": "2020-02",
+  "linha_fina": "Single de 2020, gravado no estúdio Toca do Chico Preto com produção de Victor Prospero.",
+  "capa": null,
+  "creditos": [
+    {
+      "funcao": "Gravação",
+      "quem": "Toca do Chico Preto, São Bernardo do Campo"
+    },
+    {
+      "funcao": "Produção",
+      "quem": "Victor Prospero"
+    },
+    {
+      "funcao": "Arte",
+      "quem": "João Medeiros"
+    }
+  ],
+  "videos": [
+    "modus-operandi"
+  ]
+}

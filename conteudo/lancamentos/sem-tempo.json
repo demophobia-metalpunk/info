@@ -1,0 +1,15 @@
+{
+  "slug": "sem-tempo",
+  "titulo": "Sem Tempo",
+  "tipo": "single",
+  "data": "2024",
+  "linha_fina": "Primeiro single de Perversidade e Violência, com clipe e guitarras de Diego Rocha (Blasthrash).",
+  "capa": {
+    "arquivo": "capas/sem-tempo.jpg",
+    "descricao": "Capa do single Sem Tempo: soldados marchando diante de uma igreja, com um crucifixo ao fundo"
+  },
+  "do_album": "perversidade-e-violencia",
+  "videos": [
+    "sem-tempo"
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "slug": "moinhos-de-gastar-gente",
+  "titulo": "Moinhos de Gastar Gente",
+  "tipo": "ep",
+  "data": "2019-04",
+  "linha_fina": "EP de estreia, lançado com o apoio dos selos Brutal Grind, Die Hard Records e Manaós.",
+  "capa": null,
+  "faixas": [
+    {
+      "titulo": "Moinho Satânico"
+    },
+    {
+      "titulo": "Negação"
+    },
+    {
+      "titulo": "Mercado Parasita"
+    },
+    {
+      "titulo": "Ficção em Horário Nobre"
+    }
+  ],
+  "creditos": [
+    {
+      "funcao": "Gravação",
+      "quem": "Toca do Chico Preto, São Bernardo do Campo"
+    },
+    {
+      "funcao": "Produção",
+      "quem": "Victor Prospero"
+    },
+    {
+      "funcao": "Arte",
+      "quem": "João Medeiros"
+    },
+    {
+      "funcao": "Selos",
+      "quem": "Brutal Grind (ABC), Die Hard Records (São Paulo) e Manaós (Manaus)"
+    }
+  ],
+  "videos": [
+    "moinhos-de-gastar-gente",
+    "ficcao-em-horario-nobre"
+  ],
+  "texto_html": "<p>Disponível em todas as plataformas digitais, para download gratuito no Bandcamp e em CD físico.</p>"
+}

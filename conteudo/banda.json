@@ -1,0 +1,110 @@
+{
+  "nome": "Demophobia",
+  "linha_fina": "Metal punk do ABC Paulista. Thrash, death metal e a agressividade do punk, com letras em português sobre a formação social brasileira.",
+  "origem": {
+    "regiao": "ABC Paulista",
+    "uf": "SP",
+    "pais": "BR"
+  },
+  "fundacao": "2018",
+  "generos": [
+    "Thrash metal",
+    "Death metal",
+    "Punk",
+    "Hardcore"
+  ],
+  "destaque": "perversidade-e-violencia",
+  "formacao": [
+    {
+      "nome": "Rafael Vieira",
+      "funcao": "Vocal"
+    },
+    {
+      "nome": "Paulo Vitor Lira",
+      "funcao": "Guitarra"
+    },
+    {
+      "nome": "João Medeiros",
+      "funcao": "Baixo"
+    },
+    {
+      "nome": "Arthur Patroc",
+      "funcao": "Bateria"
+    }
+  ],
+  "foto": {
+    "arquivo": "banda/banda-trem.jpg",
+    "descricao": "Os quatro integrantes da Demophobia em pé diante de um trem em movimento"
+  },
+  "nome_origem": {
+    "partes": [
+      {
+        "termo": "Demos",
+        "sentido": "povo"
+      },
+      {
+        "termo": "Phobos",
+        "sentido": "temor"
+      }
+    ],
+    "texto": "Do grego antigo: o medo que a elite econômica tem do povo, ou, simplesmente, da democracia."
+  },
+  "bio_html": "<p>Criada em 2018 no ABC Paulista, a Demophobia mistura o peso do thrash e do death metal com a agressividade do punk, com letras cantadas em português.</p><p>A banda se define pelo espírito antropofágico: busca um estilo próprio e, pela temática e pela sonoridade, expõe o emaranhado das relações político-sociais da sociedade brasileira.</p><p>O primeiro trabalho, o EP <em>Moinhos de Gastar Gente</em>, saiu em abril de 2019 com o apoio de três selos: Brutal Grind (ABC), Die Hard Records (São Paulo) e Manaós (Manaus).</p><p>Ao longo da trajetória, a banda dividiu palco com nomes como Crypta, Manger Cadavre?, Test, Skarnio, ROT, Ação Direta, Cras, Golpe de Estado, DZK, Amorfo, Trassas, Red Razor e Anthares.</p>",
+  "trajetoria": [
+    {
+      "ano": "2018",
+      "titulo": "Formação",
+      "texto": "A banda nasce no ABC Paulista, unindo thrash, death metal e punk com letras em português."
+    },
+    {
+      "ano": "2019",
+      "titulo": "Moinhos de Gastar Gente",
+      "texto": "EP de estreia gravado no estúdio Toca do Chico Preto, em São Bernardo do Campo, com produção de Victor Prospero. 13 shows no ABC, São Paulo, São José dos Campos, Suzano e Jandira."
+    },
+    {
+      "ano": "2020",
+      "titulo": "Modus Operandi",
+      "texto": "Single lançado em fevereiro, gravado no Toca do Chico Preto com Victor Prospero. Em seguida, dois anos de hiato por conta da pandemia."
+    },
+    {
+      "ano": "2022",
+      "titulo": "O Chamado",
+      "texto": "Retorno com single sobre as lutas operárias do ABC entre 1979 e 1981, gravado no Family Mob com Hugo Silva (Surra, Desalmado) e com lyric video de Alcides Burn (Krisiun, Nervosa, Venom Inc). Show no 1º Dia Municipal do Rock de Santo André, com Crypta, Golpe de Estado, Manger Cadavre? e DZK."
+    },
+    {
+      "ano": "2023",
+      "titulo": "Estúdio e estrada",
+      "texto": "Gravação do primeiro álbum, de fevereiro a julho. No segundo semestre, tour com a Corja ao lado do Cras em Americana (SP) e o Masters of Noise, em 2 de dezembro, maior evento underground da América Latina."
+    },
+    {
+      "ano": "2024",
+      "titulo": "Perversidade e Violência",
+      "texto": "Lançamento do primeiro álbum completo em 1º de maio, precedido pelos singles “Sem Tempo” e “Nunca se Renda”."
+    }
+  ],
+  "contato": {
+    "email": "demophobia.band@gmail.com"
+  },
+  "redes": [
+    {
+      "rede": "instagram",
+      "rotulo": "Instagram",
+      "url": "https://www.instagram.com/demophobia.metalpunk/"
+    },
+    {
+      "rede": "spotify",
+      "rotulo": "Spotify",
+      "url": "https://open.spotify.com/artist/3tu6wApU3CRvIo0dvPuoQg"
+    },
+    {
+      "rede": "youtube",
+      "rotulo": "YouTube",
+      "url": "https://www.youtube.com/@DemophobiaMetalpunk"
+    },
+    {
+      "rede": "link",
+      "rotulo": "Todos os links",
+      "url": "https://linktr.ee/demophobia"
+    }
+  ]
+}

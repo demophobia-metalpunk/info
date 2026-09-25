@@ -1,0 +1,27 @@
+{
+  "titulo": "Imprensa",
+  "linha_fina": "Release, fotos oficiais e contatos da Demophobia para imprensa, rádios, produtores e selos.",
+  "release_lancamento": "perversidade-e-violencia",
+  "downloads": [
+    {
+      "arquivo": "imprensa/demophobia-perversidade-e-violencia-capa.jpg",
+      "miniatura": "capas/perversidade-e-violencia.jpg",
+      "rotulo": "Capa do álbum"
+    },
+    {
+      "arquivo": "imprensa/demophobia-foto-oficial-1.jpg",
+      "miniatura": "banda/banda-trem.jpg",
+      "rotulo": "Foto oficial 1"
+    },
+    {
+      "arquivo": "imprensa/demophobia-foto-oficial-2.jpg",
+      "miniatura": "banda/banda-igreja.jpg",
+      "rotulo": "Foto oficial 2"
+    }
+  ],
+  "assessoria": {
+    "nome": "Agência 1a1",
+    "logo": "marcas/agencia-1a1.png",
+    "texto": "Assessoria de imprensa, mídias sociais e marketing de conteúdo do lançamento de Perversidade e Violência."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "slug": "o-chamado",
+  "titulo": "O Chamado",
+  "tipo": "single",
+  "data": "2022",
+  "linha_fina": "Single sobre a luta de trabalhadoras e trabalhadores do ABC Paulista entre 1979 e 1981.",
+  "capa": null,
+  "creditos": [
+    {
+      "funcao": "Gravação",
+      "quem": "Family Mob, São Paulo"
+    },
+    {
+      "funcao": "Produção",
+      "quem": "Hugo Silva (Surra, Desalmado)"
+    },
+    {
+      "funcao": "Lyric video",
+      "quem": "Alcides Burn (Krisiun, Nervosa, Venom Inc)"
+    }
+  ],
+  "videos": [
+    "o-chamado"
+  ],
+  "texto_html": "<p>Depois de dois anos de hiato por conta da pandemia, a banda retomou as atividades com <em>O Chamado</em>. A faixa revisita um episódio importante da história brasileira: a luta de trabalhadoras e trabalhadores da região do ABC Paulista entre 1979 e 1981 por melhor qualidade de vida e maior participação na vida política do país.</p>"
+}
