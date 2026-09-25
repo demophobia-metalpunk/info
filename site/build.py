@@ -614,7 +614,7 @@ class Site:
         if a.proximos:
             shows = '<ul class="shows">' + "".join(self.item_show(s) for s in a.proximos[:4]) + "</ul>"
         else:
-            shows = f'<p class="vazio">Nenhuma data anunciada agora. Para levar a Demophobia para o seu evento, escreva para <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
+            shows = f'<p class="vazio">Datas em Breve. Para levar a Demophobia para o seu evento, escreva para <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
         ultimos = ""
         if a.passados:
             ultimos = '<h3 style="margin:48px 0 16px;font-size:28px">Últimos shows</h3><ul class="shows">' + "".join(self.item_show(s) for s in a.passados[:3]) + "</ul>"
@@ -765,7 +765,7 @@ class Site:
         if a.proximos:
             prox = '<ul class="shows">' + "".join(self.item_show(s) for s in a.proximos) + "</ul>"
         else:
-            prox = f'<p class="vazio">Nenhuma data anunciada agora. Contratação: <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
+            prox = f'<p class="vazio">Datas em Breve. Contratação: <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
         hist = ""
         if a.passados:
             hist = '<h2 style="margin-top:72px">Já passou</h2><ul class="shows">' + "".join(self.item_show(s) for s in a.passados) + "</ul>"
