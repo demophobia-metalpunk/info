@@ -274,3 +274,45 @@ section.bloco + section.bloco { border-top: 1px solid var(--rule); }
   html { scroll-behavior: auto; }
   * { transition: none !important; }
 }
+
+/* marcação do que falta (só na prévia) */
+.falta { display: block; border: 1px dashed var(--blood-hi); background: rgba(179,38,30,.10); color: var(--bone); font: 400 14px/1.45 var(--type); padding: 12px 14px; margin: 12px 0; }
+.falta::before { content: "FALTA · "; color: var(--blood-hi); letter-spacing: .08em; }
+span.falta { display: inline-block; margin: 0; padding: 4px 8px; }
+.aviso-previa { background: var(--blood); color: var(--bone); font: 400 14px/1.4 var(--type); text-align: center; padding: 10px var(--gutter); }
+
+/* imprensa e contratação */
+.kit-hero { position: relative; min-height: min(78vh, 720px); display: flex; align-items: flex-end; isolation: isolate; overflow: hidden; }
+.kit-hero > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
+.kit-hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,10,9,.15) 0%, rgba(11,10,9,.55) 45%, var(--bg) 100%); }
+.kit-hero .wrap { padding-top: 120px; padding-bottom: clamp(40px, 6vw, 72px); width: 100%; }
+.kit-hero h1 { font-size: clamp(64px, 11vw, 150px); line-height: .85; margin-bottom: 18px; }
+.kit-hero .frase { font-size: clamp(18px, 2vw, 22px); max-width: 760px; margin-bottom: 28px; }
+.linha-rapida { display: flex; flex-wrap: wrap; gap: 8px 10px; list-style: none; padding: 0; margin: 0; }
+.linha-rapida li { border: 1px solid var(--rule); padding: 10px 14px; font: 400 14px/1.2 var(--type); background: var(--bg); }
+.prova { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.prova > div { background: var(--bg-2); padding: 28px 26px; }
+.prova h3 { font-size: 22px; margin-bottom: 16px; color: var(--blood-hi); }
+.prova ul { list-style: none; margin: 0; padding: 0; }
+.prova li { padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 15px; color: var(--bone-dim); }
+.prova li:last-child { border-bottom: 0; }
+.prova li strong { display: block; color: var(--bone); font-weight: 700; }
+.nomes { display: flex; flex-wrap: wrap; gap: 6px 14px; font: 400 22px/1.2 var(--display); text-transform: uppercase; }
+.agora { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px, 2vw, 20px); }
+.agora li { border: 1px solid var(--rule); padding: 24px; background: var(--bg); }
+.agora .quando { font: 400 48px/1 var(--display); color: var(--blood-hi); display: block; margin-bottom: 10px; }
+.agora h3 { font-size: 24px; }
+.fotos-palco { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 24px; }
+.fotos-palco button { aspect-ratio: 1; }
+.ficha { margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 40px; }
+.ficha div { padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.ficha dt { font: 400 13px/1.4 var(--type); color: var(--muted); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.ficha dd { margin: 0; }
+.release { background: var(--bg); border: 1px solid var(--rule); padding: 24px; margin: 0 0 12px; font-size: 16px; color: var(--bone); }
+.copiar { font: 400 13px/1 var(--type); background: none; border: 1px solid var(--rule); color: var(--bone-dim); padding: 10px 12px; cursor: pointer; letter-spacing: .06em; text-transform: uppercase; }
+.copiar:hover { border-color: var(--bone); color: var(--bone); }
+@media (max-width: 860px) {
+  .prova, .agora { grid-template-columns: 1fr; }
+  .fotos-palco { grid-template-columns: repeat(2, 1fr); }
+  .ficha { grid-template-columns: 1fr; }
+}

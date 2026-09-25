@@ -40,3 +40,10 @@ document.querySelectorAll('[data-youtube]').forEach(b => b.addEventListener('cli
     if (e.key === 'ArrowRight') mostrar(i + 1);
   });
 })();
+
+// copiar o release
+document.querySelectorAll('[data-copiar]').forEach(b => b.addEventListener('click', async () => {
+  const alvo = document.getElementById(b.dataset.copiar);
+  try { await navigator.clipboard.writeText(alvo.innerText); b.textContent = 'Copiado'; }
+  catch { b.textContent = 'Selecione e copie'; }
+}));

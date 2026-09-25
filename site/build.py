@@ -197,9 +197,9 @@ class Acervo:
         for v in self.videos:
             if v.get("lancamento") and v["lancamento"] not in self.lanc_por_slug:
                 raise ErroDeConteudo(f"videos/{v['slug']}.json: lançamento '{v['lancamento']}' não existe")
-        rel = self.imprensa.get("release_lancamento")
-        if rel and rel not in self.lanc_por_slug:
-            raise ErroDeConteudo(f"imprensa.json: release_lancamento '{rel}' não existe")
+        for v in self.imprensa.get("videos_ao_vivo", []):
+            if v not in self.video_por_slug:
+                raise ErroDeConteudo(f"imprensa.json: vídeo '{v}' não existe em videos/")
 
 
 # ---------------------------------------------------------------- cartão og
@@ -287,6 +287,7 @@ class Site:
         self.m = Midias()
         self.og = Cartoes()
         self.rotas: list[dict] = []   # tudo que o build escreveu; sitemap e checagens saem daqui
+        self.faltas: list[str] = []
         self.css = (ASSETS / "estilo.css").read_text(encoding="utf-8")
         self.js = (ASSETS / "site.js").read_text(encoding="utf-8")
 
@@ -815,61 +816,199 @@ class Site:
         og = self.og.gerar(f"loja-{p['slug']}", p["titulo"], "Loja Demophobia", p["fotos"][0]["arquivo"])
         self.pagina(f"/loja/{p['slug']}/", p["titulo"], p["linha_fina"], corpo, og=og, ld=[ld], ativo="/loja/")
 
+    def falta(self, texto: str, inline: bool = False) -> str:
+        """Marca o que falta. Na prévia aparece na página; em produção some, e o build lista no fim."""
+        self.faltas.append(texto)
+        if self.producao:
+            return ""
+        tag = "span" if inline else "div"
+        return f'<{tag} class="falta">{esc(texto)}</{tag}>'
+
     def imprensa(self):
-        """Página de bastidor: fora do menu, do sitemap, do llms.txt e do index.json, e sempre com noindex."""
+        """Imprensa e contratação. Página de bastidor: fora do menu, do sitemap, do llms.txt e do
+        index.json, e sempre com noindex. Segue a ordem em que o produtor decide."""
         a, im, b = self.a, self.a.imprensa, self.a.banda
-        release = ""
-        l = a.lanc_por_slug.get(im.get("release_lancamento") or "")
-        if l:
-            origem = f"lancamentos/{l['slug']}.json"
-            faixas = "".join(self.faixa(f) for f in l.get("faixas", []))
-            creditos = "".join(f'<div><dt>{esc(c["funcao"])}</dt><dd>{esc(c["quem"])}</dd></div>' for c in l.get("creditos", []))
-            release = f"""<section class="bloco"><div class="wrap lanc">
-  <div class="capa">{self.capa_ou_nome(l, origem)}</div>
-  <div>
-    <p class="kicker">Release · {esc(TIPOS_LANCAMENTO[l["tipo"]])} · {esc(data_extenso(l["_data"], l["_prec"]))}</p>
-    <h2>{esc(l["titulo"])}</h2>
-    <div class="prose">{l.get("texto_html", "")}</div>
+        o = "imprensa.json"
+        ct, tec, mat = im.get("contato", {}), im.get("tecnico", {}), im.get("material", {})
+        email = ct.get("email") or b["contato"]["email"]
+
+        # 1. topo: foto ao vivo, frase e três botões
+        wa = ct.get("whatsapp")
+        botao_contato = (f'<a class="btn primario" href="https://wa.me/{esc(re.sub(r"[^0-9]", "", wa))}" target="_blank" rel="noopener">Contratar pelo WhatsApp</a>'
+                         if wa else f'<a class="btn primario" href="mailto:{esc(email)}?subject=Contrata%C3%A7%C3%A3o%20Demophobia">Contratar</a>')
+        botao_rider = (f'<a class="btn fantasma" href="{self.m.url(tec["rider_pdf"], o)}" download>{self.icone("dl")}Rider técnico</a>'
+                       if tec.get("rider_pdf") else "")
+        falta_topo = ""  # WhatsApp e rider são marcados nos blocos de contato e técnico
+        foto = im["foto_topo"]
+        gostos = im.get("para_quem_gosta") or []
+        itens_rapidos = [b["origem"]["regiao"] + " · " + b["origem"]["uf"], "Desde " + b.get("fundacao", ""),
+                         "Thrash · Death · Punk", "Letras em português", f'{len(b["formacao"])} integrantes']
+        rapida = "".join(f"<li>{esc(x)}</li>" for x in itens_rapidos)
+        if gostos:
+            rapida += f'<li>Para quem gosta de {esc(", ".join(gostos))}</li>'
+        corpo = f"""<header class="kit-hero">
+  <img src="{self.m.url(foto["arquivo"], o)}" alt="{esc(foto["descricao"])}">
+  <div class="wrap">
+    <p class="kicker">Imprensa e contratação</p>
+    <h1>Demophobia</h1>
+    <p class="frase">{esc(im["frase"])}</p>
+    <div class="btns">{botao_contato}<a class="btn fantasma" href="#ao-vivo">{self.icone("play")}Ver ao vivo</a>{botao_rider}</div>
+    {falta_topo}
   </div>
-</div></section>
-<section class="bloco alt"><div class="wrap cols">
-  <div><h2>Faixas</h2><ol class="faixas">{faixas}</ol></div>
-  <div><h2>Ficha técnica</h2><dl class="creditos">{creditos}</dl></div>
+</header>
+<section class="bloco"><div class="wrap">
+  <ul class="linha-rapida">{rapida}</ul>
+  {"" if gostos else self.falta("2 ou 3 bandas de referência para “para quem gosta de…”: ajuda o produtor a encaixar a banda num line-up")}
 </div></section>"""
+
+        # 3. prova
+        pv = im.get("prova", {})
+        eventos = "".join(f'<li><strong>{esc(e["nome"])}</strong>{esc(e["detalhe"])}</li>' for e in pv.get("eventos", []))
+        particip = "".join(f"<li>{esc(x)}</li>" for x in pv.get("participacoes", []))
+        nomes = "".join(f"<span>{esc(n)}</span>" for n in pv.get("palco_com", []))
+        numeros = ""
+        if pv.get("numeros"):
+            numeros = '<div class="dados" style="margin-top:28px"><dl>' + "".join(
+                f'<div><dt>{esc(n["rotulo"])}</dt><dd>{esc(n["valor"])}</dd></div>' for n in pv["numeros"]) + "</dl></div>"
+        else:
+            numeros = self.falta("Números, se quisermos mostrar: quantos shows desde 2018, ouvintes mensais, seguidores, views")
+        corpo += f"""<section class="bloco alt"><div class="wrap">
+  <p class="kicker">Prova</p><h2>Onde já tocou</h2>
+  <div class="prova">
+    <div><h3>Eventos</h3><ul>{eventos}</ul></div>
+    <div><h3>Dividiu palco com</h3><div class="nomes">{nomes}</div></div>
+    <div><h3>Participações</h3><ul>{particip}</ul></div>
+  </div>
+  {numeros}
+</div></section>"""
+
+        # 4. agora
+        ag = im.get("agora", {})
+        cards = ""
+        for it in ag.get("itens", []):
+            titulo = it.get("titulo")
+            quando = it.get("data") or it["quando"]
+            cards += f'<li><span class="quando">{esc(it["quando"])}</span><h3>{esc(it["o_que"])}{": " + esc(titulo) if titulo else ""}</h3>'
+            if not titulo:
+                cards += self.falta(f'nome e data: {it["o_que"]} de {it["quando"]}')
+            cards += "</li>"
+        corpo += f"""<section class="bloco"><div class="wrap">
+  <p class="kicker">Agora</p><h2>O que vem</h2>
+  <p class="lead" style="max-width:760px">{esc(ag.get("texto", ""))}</p>
+  <ul class="agora">{cards}</ul>
+</div></section>"""
+
+        # 5. ao vivo
+        vids = [a.video_por_slug[v] for v in im.get("videos_ao_vivo", []) if v in a.video_por_slug]
+        falta_video = "" if im.get("video_ao_vivo_bom") else self.falta(
+            "Um vídeo ao vivo de 1 a 3 minutos com público e som bom. O único registro hoje é o Roadie Crew Online Festival, que foi um festival online. Se não existir, filmar o próximo show pensando nisso")
+        corpo += f"""<section class="bloco alt" id="ao-vivo"><div class="wrap">
+  <p class="kicker">Ao vivo</p><h2>No palco</h2>
+  {self.grade_videos(vids) if vids else ""}
+  {falta_video}
+  {self.galeria(im.get("fotos_palco", []), "fotos-palco", o).replace('class="galeria fotos-palco"', 'class="galeria fotos-palco" style="grid-template-columns:repeat(auto-fill,minmax(200px,1fr))"')}
+</div></section>"""
+
+        # 6. ouça
+        ou = im.get("ouca", {})
+        faixas = ou.get("faixas") or []
+        lista = ""
+        if faixas:
+            lista = '<ol class="faixas">' + "".join(self.faixa(f) for f in faixas) + "</ol>"
+        link = ou.get("link")
+        corpo += f"""<section class="bloco"><div class="wrap cols">
+  <div><p class="kicker">Ouça</p><h2>Comece por aqui</h2></div>
+  <div>
+    {lista}
+    {"" if faixas else self.falta("As 3 músicas que abrem a página, na ordem de impacto (não na ordem do disco)")}
+    {"" if ou.get("spotify_confirmado") else self.falta("Confirmar se o álbum voltou ao Spotify. O CD Baby avisou em 2025 que ele foi removido; se ainda estiver fora, o link não pode ir para o produtor")}
+    <div class="btns" style="margin-top:20px">{f'<a class="btn primario" href="{esc(link["url"])}" target="_blank" rel="noopener">{self.icone("play")}{esc(link["rotulo"])}</a>' if link else ""}<a class="btn fantasma" href="/discografia/">Discografia completa</a></div>
+  </div>
+</div></section>"""
+
+        # 7. técnico
+        def campo(rotulo, valor, falta_txt):
+            if valor:
+                return f"<div><dt>{esc(rotulo)}</dt><dd>{esc(valor)}</dd></div>"
+            return f"<div><dt>{esc(rotulo)}</dt><dd>{self.falta(falta_txt, inline=True) or '—'}</dd></div>"
+        formacao = ", ".join(f'{p["nome"]} ({p["funcao"].lower()})' for p in b["formacao"])
+        docs_tec = ""
+        if tec.get("rider_pdf"):
+            docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["rider_pdf"], o)}" download>{self.icone("dl")}Rider técnico</a>'
+        if tec.get("mapa_palco"):
+            docs_tec += f'<a class="btn fantasma" href="{self.m.url(tec["mapa_palco"], o)}" download>{self.icone("dl")}Mapa de palco</a>'
+        corpo += f"""<section class="bloco alt"><div class="wrap">
+  <p class="kicker">Técnico</p><h2>Para montar o show</h2>
+  <dl class="ficha">
+    <div><dt>Formação</dt><dd>{esc(formacao)}{"" if tec.get("formacao_confirmada") else self.falta("confirmar a formação atual e a grafia dos nomes (Arthur Patroc ou Arthur Henrique?)")}</dd></div>
+    {campo("Cidade-base", tec.get("cidade_base"), "cidade-base")}
+    {campo("Tempo de set", tec.get("tempo_set"), "30, 45 ou 60 minutos?")}
+    {campo("Pessoas na viagem", tec.get("pessoas_viajam"), "quantas pessoas viajam (banda + equipe)")}
+    {campo("Backline", tec.get("backline"), "o que a banda leva e o que precisa da casa")}
+    {campo("Disponibilidade", tec.get("raio"), "raio de viagem")}
+  </dl>
+  <div class="btns" style="margin-top:24px">{docs_tec}</div>
+  {"" if tec.get("rider_pdf") and tec.get("mapa_palco") else self.falta("Rider técnico e mapa de palco em PDF. Se não existirem, mandar a lista de equipamento e eu monto")}
+</div></section>"""
+
+        # 8. material
         downloads = ""
-        for d in im.get("downloads", []):
+        for d in mat.get("downloads", []):
             arq = MIDIAS / d["arquivo"]
-            self.m.url(d["arquivo"], "imprensa.json")
+            self.m.url(d["arquivo"], o)
             with self.og.Image.open(arq) as i:
                 dims = f"{i.width} × {i.height}"
-            peso = arq.stat().st_size / 1_000_000
             downloads += f"""<a class="dl" href="/midias/{esc(d["arquivo"])}" download>
-  <img src="{self.m.url(d["miniatura"], "imprensa.json")}" alt="" loading="lazy">
-  <div class="corpo"><div><strong>{esc(d["rotulo"])}</strong><small>JPG · {dims} · {peso:.1f} MB</small></div>{self.icone("dl")}</div>
+  <img src="{self.m.url(d["miniatura"], o)}" alt="" loading="lazy">
+  <div class="corpo"><div><strong>{esc(d["rotulo"])}</strong><small>JPG · {dims} · {arq.stat().st_size / 1_000_000:.1f} MB</small></div>{self.icone("dl")}</div>
 </a>"""
+        if mat.get("logo"):
+            downloads += f"""<a class="dl" href="{self.m.url(mat["logo"], o)}" download>
+  <img src="{self.m.url(mat["logo"], o)}" alt="" loading="lazy" style="object-fit:contain;padding:24px">
+  <div class="corpo"><div><strong>Logo</strong><small>PNG transparente</small></div>{self.icone("dl")}</div>
+</a>"""
+        credito = f'<p class="dim">Fotos: {esc(mat["credito_fotos"])}</p>' if mat.get("credito_fotos") else self.falta("Crédito das fotos (quem fotografou?)")
+        corpo += f"""<section class="bloco"><div class="wrap">
+  <p class="kicker">Material</p><h2>Para divulgar</h2>
+  <h3 style="margin-bottom:12px">Release curto</h3>
+  <p class="release" id="release-curto">{esc(mat.get("release_curto", ""))}</p>
+  <button class="copiar" data-copiar="release-curto">Copiar release</button>
+  {"" if mat.get("release_atualizado") else self.falta("Atualizar o release com os singles de 2026 e o EP de 2027 quando tiverem nome")}
+  <div class="downloads" style="margin-top:40px">{downloads}</div>
+  {"" if mat.get("logo") else self.falta("Logo em PNG transparente (branco e preto)")}
+  {credito}
+</div></section>"""
+
+        # 9. contato
+        linhas = []
+        if ct.get("responsavel"):
+            linhas.append(f'<p class="lead" style="margin:0 0 8px">{esc(ct["responsavel"])}</p>')
+        else:
+            linhas.append(self.falta("Nome de quem responde pela contratação"))
+        if wa:
+            linhas.append(f'<p><a class="email" href="https://wa.me/{esc(re.sub(r"[^0-9]", "", wa))}" target="_blank" rel="noopener">WhatsApp {esc(wa)}</a></p>')
+        else:
+            linhas.append(self.falta("WhatsApp de contratação"))
+        linhas.append(f'<p><a class="email" href="mailto:{esc(email)}">{esc(email)}</a></p>')
         ass = im.get("assessoria")
         assessoria = ""
         if ass:
             assessoria = f"""<div class="contato"><h3>Assessoria</h3><div class="assessoria">
-  <img src="{self.m.url(ass["logo"], "imprensa.json")}" alt="Logotipo da {esc(ass["nome"])}" loading="lazy"><p>{esc(ass["texto"])}</p></div></div>"""
-        formacao = ", ".join(f'{p["nome"]} ({p["funcao"].lower()})' for p in b["formacao"])
-        corpo = f"""{self.cabeca("Press kit", "Imprensa", im["linha_fina"])}
-<section class="bloco alt"><div class="wrap cols">
-  <div><p class="kicker">Em uma frase</p><h2>Demophobia</h2></div>
-  <div class="prose"><p class="lead">{esc(b["linha_fina"])}</p><p><strong>Formação:</strong> {esc(formacao)}.</p>{b["bio_html"]}</div>
-</div></section>
-{release}
-<section class="bloco"><div class="wrap">
-  <h2>Para baixar</h2>
-  <div class="downloads">{downloads}</div>
+  <img src="{self.m.url(ass["logo"], o)}" alt="Logotipo da {esc(ass["nome"])}" loading="lazy"><p>{esc(ass["texto"])}</p></div>
+  {"" if ass.get("confirmada") else self.falta("A Agência 1a1 ainda é a assessoria? Se não, este bloco sai")}</div>"""
+        corpo += f"""<section class="bloco alt"><div class="wrap">
+  <p class="kicker">Contato</p><h2>Vamos marcar</h2>
   <div class="contatos">
-    <div class="contato"><h3>Contato</h3><p>Entrevistas, datas e propostas de shows:</p>
-      <a class="email" href="mailto:{esc(b["contato"]["email"])}">{esc(b["contato"]["email"])}</a>{self.redes()}</div>
+    <div class="contato"><h3>Contratação</h3>{"".join(linhas)}{self.redes()}</div>
     {assessoria}
   </div>
 </div></section>"""
-        og = self.og.gerar("imprensa", "Press kit", "Demophobia · Imprensa", l["capa"]["arquivo"] if l and l.get("capa") else None)
-        self.pagina("/imprensa/", "Imprensa", im["linha_fina"], corpo, og=og, indexavel=False)
+
+        if not self.producao and self.faltas:
+            corpo = (f'<p class="aviso-previa">Prévia interna: {len(self.faltas)} itens marcados em vermelho ainda faltam. '
+                     'Em produção essas marcas somem.</p>') + corpo
+        og = self.og.gerar("imprensa", "Imprensa e contratação", "Demophobia", foto["arquivo"])
+        self.pagina("/imprensa/", im["titulo"], im["linha_fina"], corpo, og=og, indexavel=False)
 
     def nao_encontrada(self):
         corpo = f"""{self.cabeca("Erro 404", "Página não encontrada", "O endereço pode ter mudado. Tente pela discografia ou pela página inicial.")}
@@ -1048,6 +1187,10 @@ def main():
     arquivos = sum(1 for p in DIST.rglob("*") if p.is_file())
     modo = "PRODUÇÃO (indexável)" if args.producao else "PRÉVIA (noindex em tudo)"
     print(f"ok: {paginas} páginas, {arquivos} arquivos em site/dist · modo {modo}")
+    if site.faltas:
+        print(f"\n/imprensa/ tem {len(site.faltas)} pendências" + (" (escondidas em produção):" if args.producao else " (marcadas na prévia):"))
+        for f in site.faltas:
+            print(f"  - {f}")
     if args.servir:
         servir(args.servir)
 

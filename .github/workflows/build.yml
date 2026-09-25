@@ -1,0 +1,88 @@
+name: build
+
+# Constrói o site a partir de conteudo/ e publica no Cloudflare Pages.
+#
+# PADRÃO ATUAL: PRÉVIA (noindex em tudo). O site ainda não está no ar em demophobia.band,
+# então o erro caro hoje é uma prévia indexável. NO DIA DA VIRADA (domínio apontado),
+# inverter: produção vira o padrão e prévia passa a ser o pedido explícito. Ver MODO abaixo.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'conteudo/**'
+      - 'site/**'
+      - '.github/workflows/build.yml'
+  schedule:
+    # todo dia às 06:07 (Brasília): move shows para "já passou" e publica notícias agendadas
+    - cron: '7 9 * * *'
+  workflow_dispatch:
+    inputs:
+      producao:
+        description: 'Indexável? Enquanto o domínio não aponta para cá, NÃO'
+        type: choice
+        options: ['nao', 'sim']
+        default: 'nao'
+  # chamável por outro workflow: push feito com GITHUB_TOKEN não dispara on:push
+  workflow_call:
+    inputs:
+      producao: { type: string, default: 'nao' }
+      ref:      { type: string, default: '' }
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build
+  cancel-in-progress: false
+
+jobs:
+  construir:
+    runs-on: ubuntu-latest
+    steps:
+      # ref vazio = padrão; quem chama depois de commitar passa o sha novo
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # sem Pillow o build falha nos cartões og; instalar sempre
+      - run: python3 -m pip install --quiet pillow
+
+      - name: Miniaturas dos vídeos
+        run: python3 site/miniaturas.py
+
+      - name: Construir
+        run: |
+          # Enquanto o site não está no ar, só o pedido EXPLÍCITO de produção indexa.
+          # Na virada: trocar para MODO="--producao" e [ "…" = "nao" ] && MODO=""
+          MODO=""
+          [ "${{ inputs.producao }}" = "sim" ] && MODO="--producao"
+          python3 site/build.py $MODO
+
+      - name: Publicar no Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          npx --yes wrangler@4 pages deploy site/dist \
+            --project-name demophobia --branch main --commit-dirty=true
+
+      # "publicou" não é "está no ar servindo o que eu acho": conferir por fora, no HTTP
+      - name: Conferir o que está servido
+        run: |
+          set -e
+          BASE=https://demophobia.pages.dev
+          sleep 10
+          curl -sf "$BASE/index.json" | python3 -c "import json,sys; d=json.load(sys.stdin); assert d['contrato']=='demophobia-index/1'; print(d['total'],'itens, contrato',d['contrato'])"
+          CAB=$(curl -sI "$BASE/" | tr -d '\r' | grep -i '^x-robots-tag' || true)
+          CAB_IMP=$(curl -sI "$BASE/imprensa/" | tr -d '\r' | grep -i '^x-robots-tag' || true)
+          [ -n "$CAB_IMP" ] || { echo "/imprensa/ SEM noindex"; exit 1; }
+          if [ "${{ inputs.producao }}" = "sim" ]; then
+            [ -z "$CAB" ] && echo "produção: home sem noindex, como esperado" || { echo "produção com noindex na home: $CAB"; exit 1; }
+          else
+            [ -n "$CAB" ] && echo "prévia: $CAB" || { echo "prévia SEM noindex"; exit 1; }
+          fi

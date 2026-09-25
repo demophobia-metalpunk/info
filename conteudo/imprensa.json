@@ -1,27 +1,149 @@
 {
-  "titulo": "Imprensa",
-  "linha_fina": "Release, fotos oficiais e contatos da Demophobia para imprensa, rádios, produtores e selos.",
-  "release_lancamento": "perversidade-e-violencia",
-  "downloads": [
+  "titulo": "Imprensa e contratação",
+  "linha_fina": "Tudo o que produtores, casas e imprensa precisam para levar a Demophobia ao palco: som, prova, rider, material e contato.",
+  "foto_topo": {
+    "arquivo": "ao-vivo/ao-vivo-01.jpg",
+    "descricao": "Vocalista da Demophobia cantando sob luzes roxas"
+  },
+  "frase": "Metal punk do ABC Paulista: o peso do thrash e do death metal com a agressividade do punk, e letras em português sobre a formação social brasileira.",
+  "para_quem_gosta": [],
+  "prova": {
+    "eventos": [
+      {
+        "nome": "Masters of Noise",
+        "detalhe": "2 de dezembro de 2023, maior evento underground da América Latina"
+      },
+      {
+        "nome": "1º Dia Municipal do Rock de Santo André",
+        "detalhe": "2022, com Crypta, Golpe de Estado, Manger Cadavre? e DZK"
+      },
+      {
+        "nome": "Tour da Corja",
+        "detalhe": "2023, com Cras, em Americana (SP)"
+      },
+      {
+        "nome": "Roadie Crew Online Festival",
+        "detalhe": "30ª edição"
+      }
+    ],
+    "palco_com": [
+      "Crypta",
+      "Manger Cadavre?",
+      "Test",
+      "Skarnio",
+      "ROT",
+      "Ação Direta",
+      "Cras",
+      "Golpe de Estado",
+      "DZK",
+      "Amorfo",
+      "Trassas",
+      "Red Razor",
+      "Anthares"
+    ],
+    "participacoes": [
+      "André Alves (Statues on Fire, ex-Nitrominds) em “Hackearam Nossa História”",
+      "Henrick Magalhães (ROT) em “Perversidade e Violência”",
+      "Diego Rocha (Blasthrash) nas guitarras de “Sem Tempo”, e na produção do álbum",
+      "Lyric video de “O Chamado” por Alcides Burn (Krisiun, Nervosa, Venom Inc)"
+    ],
+    "numeros": []
+  },
+  "agora": {
+    "texto": "Depois do álbum Perversidade e Violência (2024), a Demophobia lança dois singles ainda em 2026 e prepara um EP para 2027.",
+    "itens": [
+      {
+        "quando": "2026",
+        "o_que": "Single",
+        "titulo": null,
+        "data": null
+      },
+      {
+        "quando": "2026",
+        "o_que": "Single",
+        "titulo": null,
+        "data": null
+      },
+      {
+        "quando": "2027",
+        "o_que": "EP",
+        "titulo": null,
+        "data": null
+      }
+    ]
+  },
+  "videos_ao_vivo": [
+    "roadie-crew-online-festival"
+  ],
+  "video_ao_vivo_bom": false,
+  "fotos_palco": [
     {
-      "arquivo": "imprensa/demophobia-perversidade-e-violencia-capa.jpg",
-      "miniatura": "capas/perversidade-e-violencia.jpg",
-      "rotulo": "Capa do álbum"
+      "arquivo": "ao-vivo/ao-vivo-06.jpg",
+      "descricao": "Guitarrista e baterista da Demophobia no palco"
     },
     {
-      "arquivo": "imprensa/demophobia-foto-oficial-1.jpg",
-      "miniatura": "banda/banda-trem.jpg",
-      "rotulo": "Foto oficial 1"
+      "arquivo": "ao-vivo/ao-vivo-04.jpg",
+      "descricao": "Público em frente ao palco num festival ao ar livre"
     },
     {
-      "arquivo": "imprensa/demophobia-foto-oficial-2.jpg",
-      "miniatura": "banda/banda-igreja.jpg",
-      "rotulo": "Foto oficial 2"
+      "arquivo": "ao-vivo/ao-vivo-03.jpg",
+      "descricao": "Banda no palco sob luz vermelha e azul"
+    },
+    {
+      "arquivo": "ao-vivo/ao-vivo-05.jpg",
+      "descricao": "Baixista da Demophobia com o braço erguido"
     }
   ],
+  "ouca": {
+    "faixas": [],
+    "link": {
+      "rotulo": "Ouvir em todas as plataformas",
+      "url": "https://linktr.ee/demophobia"
+    },
+    "spotify_confirmado": false
+  },
+  "tecnico": {
+    "cidade_base": "ABC Paulista (SP)",
+    "raio": "Shows aos domingos: até 150 km de São Paulo",
+    "tempo_set": null,
+    "pessoas_viajam": null,
+    "backline": null,
+    "rider_pdf": null,
+    "mapa_palco": null,
+    "formacao_confirmada": false
+  },
+  "material": {
+    "release_curto": "A Demophobia é uma banda de metal punk do ABC Paulista, formada em 2018. Mistura thrash, death metal e punk com letras em português sobre a formação social brasileira. Lançou o EP Moinhos de Gastar Gente (2019), os singles Modus Operandi (2020) e O Chamado (2022) e o álbum Perversidade e Violência (2024), com participações de André Alves (Statues on Fire) e Henrick Magalhães (ROT). Já tocou no Masters of Noise e dividiu palco com Crypta, Manger Cadavre?, Test e ROT.",
+    "release_atualizado": false,
+    "logo": null,
+    "credito_fotos": null,
+    "downloads": [
+      {
+        "arquivo": "imprensa/demophobia-foto-oficial-1.jpg",
+        "miniatura": "banda/banda-trem.jpg",
+        "rotulo": "Foto oficial 1"
+      },
+      {
+        "arquivo": "imprensa/demophobia-foto-oficial-2.jpg",
+        "miniatura": "banda/banda-igreja.jpg",
+        "rotulo": "Foto oficial 2"
+      },
+      {
+        "arquivo": "imprensa/demophobia-perversidade-e-violencia-capa.jpg",
+        "miniatura": "capas/perversidade-e-violencia.jpg",
+        "rotulo": "Capa do álbum 2024"
+      }
+    ]
+  },
+  "contato": {
+    "responsavel": null,
+    "whatsapp": null,
+    "email": "demophobia.band@gmail.com"
+  },
   "assessoria": {
     "nome": "Agência 1a1",
     "logo": "marcas/agencia-1a1.png",
-    "texto": "Assessoria de imprensa, mídias sociais e marketing de conteúdo do lançamento de Perversidade e Violência."
+    "texto": "Assessoria de imprensa do lançamento de Perversidade e Violência.",
+    "confirmada": false
   }
 }
