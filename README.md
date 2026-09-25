@@ -1,6 +1,6 @@
 # Demophobia · site
 
-Site de demophobia.band. O conteúdo mora em `conteudo/` (JSON), `site/build.py` gera o HTML
+Site de demophobia.com.br. O conteúdo mora em `conteudo/` (JSON), `site/build.py` gera o HTML
 em `site/dist/` e o GitHub Actions publica no Cloudflare Pages. Publicar é dar push.
 
 ## Dia a dia
@@ -31,6 +31,6 @@ python3 site/build.py --producao        # como vai ao ar
 2. Token de API com **Account · Cloudflare Pages · Edit**.
 3. No GitHub, Settings → Secrets → Actions: `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`.
 4. Push na `main` publica a prévia em demophobia.pages.dev, com noindex.
-5. Domínio por último: Custom domains → demophobia.band. No mesmo dia, inverter o padrão do
+5. Domínio por último: Custom domains → demophobia.com.br e www.demophobia.com.br. No mesmo dia, inverter o padrão do
    workflow para produção (comentário no topo de `.github/workflows/build.yml`) e conferir o
    `robots.txt` servido.

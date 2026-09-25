@@ -2,7 +2,7 @@ name: build
 
 # Constrói o site a partir de conteudo/ e publica no Cloudflare Pages.
 #
-# PADRÃO ATUAL: PRÉVIA (noindex em tudo). O site ainda não está no ar em demophobia.band,
+# PADRÃO ATUAL: PRÉVIA (noindex em tudo). O site ainda não está no ar em demophobia.com.br,
 # então o erro caro hoje é uma prévia indexável. NO DIA DA VIRADA (domínio apontado),
 # inverter: produção vira o padrão e prévia passa a ser o pedido explícito. Ver MODO abaixo.
 

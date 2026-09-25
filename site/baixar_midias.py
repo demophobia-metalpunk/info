@@ -17,7 +17,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
 MIDIAS = RAIZ / "conteudo" / "midias"
-AGENTE = {"User-Agent": "Mozilla/5.0 (demophobia.band build)"}
+AGENTE = {"User-Agent": "Mozilla/5.0 (demophobia.com.br build)"}
 
 
 def baixar(url: str) -> bytes:

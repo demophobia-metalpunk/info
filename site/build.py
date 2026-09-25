@@ -30,7 +30,7 @@ MIDIAS = CONTEUDO / "midias"
 ASSETS = Path(__file__).resolve().parent / "assets"
 DIST = Path(__file__).resolve().parent / "dist"
 
-DOMINIO = "https://demophobia.band"
+DOMINIO = "https://demophobia.com.br"
 CONTRATO_INDEX = "demophobia-index/1"
 POR_PAGINA = 10
 FUSO = ZoneInfo("America/Sao_Paulo")
@@ -266,7 +266,7 @@ class Cartoes:
         for linha in linhas:
             d.text((56, y), linha, font=fonte, fill=(233, 225, 208))
             y += int(tam * 1.02)
-        d.text((56, H - 56 - 34), "DEMOPHOBIA.BAND", font=self.f_marca, fill=(167, 158, 140))
+        d.text((56, H - 56 - 34), "DEMOPHOBIA.COM.BR", font=self.f_marca, fill=(167, 158, 140))
         destino = DIST / "og" / f"{nome}.jpg"
         destino.parent.mkdir(parents=True, exist_ok=True)
         img.save(destino, quality=86, optimize=True, progressive=True)
