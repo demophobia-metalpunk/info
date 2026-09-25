@@ -615,7 +615,8 @@ class Site:
         etimo = b.get("nome_origem")
         eq = ""
         if etimo:
-            partes = ' <span class="op">+</span> '.join(f'{esc(p["termo"])} <small>{esc(p["sentido"])}</small>' for p in etimo["partes"])
+            partes = '<span class="op" aria-hidden="true">+</span>'.join(
+                f'<span class="termo"><span>{esc(p["termo"])}</span><small>{esc(p["sentido"])}</small></span>' for p in etimo["partes"])
             eq = f'<div class="etimo"><div class="eq">{partes}</div><p>{esc(etimo["texto"])}</p></div>'
         formacao = "".join(f'<li><span class="n">{esc(p["nome"])}</span><span class="f">{esc(p["funcao"])}</span></li>' for p in b["formacao"])
         tempo = "".join(f'<li><span class="ano">{esc(t["ano"])}</span><h3>{esc(t["titulo"])}</h3><p>{esc(t["texto"])}</p></li>' for t in b.get("trajetoria", []))
