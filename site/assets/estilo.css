@@ -348,3 +348,27 @@ span.falta { display: inline-block; margin: 0; padding: 4px 8px; }
 .linha-tempo li.futuro { background: var(--bg); outline: 1px dashed var(--blood); outline-offset: -8px; }
 .linha-tempo li.futuro .ano { -webkit-text-stroke: 1px var(--blood-hi); color: transparent; }
 .em-breve { display: inline-block; font: 400 12px/1 var(--type); text-transform: uppercase; letter-spacing: .1em; color: var(--bone); background: var(--blood); padding: 6px 8px; margin: -4px 0 12px; }
+
+/* logo oficial no menu e no rodapé */
+.marca img { height: 30px; width: auto; }
+.rodape .marca img { height: 52px; }
+
+/* home: topo com a foto da banda */
+.topo-banda { position: relative; min-height: min(92vh, 820px); display: flex; align-items: flex-end; overflow: hidden; isolation: isolate; }
+.topo-banda .foto { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; z-index: -2; }
+.topo-banda::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(11,10,9,.25) 0%, rgba(11,10,9,.15) 35%, var(--bg) 97%); }
+.topo-banda .conteudo-topo { width: 100%; padding-top: 160px; padding-bottom: clamp(40px, 6vw, 72px); }
+.topo-banda h1 { margin: 0 0 12px; }
+.logo-topo { width: min(640px, 88vw); height: auto; }
+.nome-topo { font-size: clamp(64px, 10vw, 140px); }
+.topo-banda .linha { font: 400 clamp(17px, 1.8vw, 21px)/1.45 var(--type); max-width: 560px; margin: 0 0 26px; }
+.lanc a.capa { display: block; }
+@media (max-width: 700px) {
+  /* no celular a foto aparece inteira em cima e o texto vem embaixo */
+  .topo-banda { display: block; min-height: 0; }
+  .topo-banda .foto { position: static; height: auto; aspect-ratio: 16 / 9; margin-top: 0; }
+  .topo-banda::after { display: none; }
+  .topo-banda .conteudo-topo { padding-top: 20px; margin-top: -60px; position: relative; }
+  .topo-banda .conteudo-topo::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 60px; background: linear-gradient(transparent, var(--bg)); z-index: -1; }
+  .linha-tempo[style] { grid-template-columns: 1fr !important; }
+}

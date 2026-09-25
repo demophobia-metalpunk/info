@@ -304,6 +304,12 @@ class Site:
     def icone(self, nome: str) -> str:
         return f'<svg aria-hidden="true"><use href="#i-{nome}"/></svg>'
 
+    def marca(self) -> str:
+        logo = self.a.banda.get("logo", {}).get("branco")
+        if logo:
+            return f'<img src="{self.m.url(logo, "banda.json")}" alt="Demophobia" width="1808" height="647">'
+        return "Demo<span>phobia</span>"
+
     def redes(self) -> str:
         itens = "".join(
             f'<a href="{esc(r["url"])}" target="_blank" rel="noopener">{self.icone(r.get("rede", "link"))}{esc(r["rotulo"])}</a>'
@@ -348,7 +354,7 @@ class Site:
 {ICONES}
 <nav class="nav" aria-label="Principal">
   <div class="wrap">
-    <a class="marca" href="/">Demo<span>phobia</span></a>
+    <a class="marca" href="/">{self.marca()}</a>
     <button class="menu-btn" aria-expanded="false" aria-controls="menu">Menu</button>
     <ul id="menu">{menu}</ul>
   </div>
@@ -359,7 +365,7 @@ class Site:
 <footer class="rodape">
   <div class="wrap">
     <div>
-      <a class="marca" href="/">Demo<span>phobia</span></a>
+      <a class="marca" href="/">{self.marca()}</a>
       <p>Metal punk do ABC Paulista · desde {esc(self.a.banda.get("fundacao", ""))}<br>
       Shows e contato: <a href="mailto:{esc(self.a.banda["contato"]["email"])}">{esc(self.a.banda["contato"]["email"])}</a></p>
     </div>
@@ -545,43 +551,27 @@ class Site:
     # ---- páginas
 
     def home(self):
+        """Funil: banda → álbum → shows → mídia (e loja no fim, se houver)."""
         a, b = self.a, self.a.banda
+        email = b["contato"]["email"]
+        foto = b.get("foto_topo") or b["foto"]
+        logo = b.get("logo", {}).get("branco")
+        titulo_topo = (f'<img class="logo-topo" src="{self.m.url(logo, "banda.json")}" alt="Demophobia" width="1808" height="647">'
+                       if logo else '<span class="nome-topo">Demophobia</span>')
         l = a.lanc_por_slug[b["destaque"]]
-        origem = f"lancamentos/{l['slug']}.json"
-        capa = self.m.url(l["capa"]["arquivo"], origem) if l.get("capa") else self.m.url(b["foto"]["arquivo"], "banda.json")
-        carimbo = {"album": "Álbum", "ep": "EP", "single": "Single"}[l["tipo"]]
         ouvir = next((x for x in l.get("links", [])), None)
-        btn_ouvir = f'<a class="btn primario" href="{esc(ouvir["url"])}" target="_blank" rel="noopener">{self.icone("play")}{esc(ouvir["rotulo"])}</a>' if ouvir else ""
+        btn_ouvir = f'<a class="btn primario" href="{esc(ouvir["url"])}" target="_blank" rel="noopener">{self.icone("play")}Ouvir</a>' if ouvir else ""
+        vem = [t for t in b.get("trajetoria", []) if t.get("futuro")]
+        frase_vem = " ".join(f'{t["ano"]}: {t["titulo"][0].lower() + t["titulo"][1:]}.' for t in vem)
 
-        if a.proximos:
-            shows = '<ul class="shows">' + "".join(self.item_show(s) for s in a.proximos[:4]) + "</ul>"
-        else:
-            shows = f'<p class="vazio">Nenhuma data anunciada agora. Para levar a Demophobia para o seu evento, escreva para <a href="mailto:{esc(b["contato"]["email"])}">{esc(b["contato"]["email"])}</a>.</p>'
-        noticias = ""
-        if a.midia or a.noticias:
-            notas = f'<div class="grade" style="margin-top:40px">{"".join(self.cartao_noticia(n) for n in a.noticias[:3])}</div>' if a.noticias else ""
-            noticias = f"""<section class="bloco alt"><div class="wrap">
-  <div class="topo-bloco"><h2>Na mídia</h2><a class="ver-tudo" href="/noticias/">Todas as matérias</a></div>
-  {self.lista_midia(a.midia[:4], com_resumo=False)}
-  {notas}
-</div></section>"""
-        loja = ""
-        if a.produtos:
-            loja = f"""<section class="bloco"><div class="wrap">
-  <div class="topo-bloco"><h2>Loja</h2><a class="ver-tudo" href="/loja/">Ver a loja</a></div>
-  <div class="grade">{"".join(self.cartao_produto(p) for p in a.produtos[:3])}</div>
-</div></section>"""
-
-        corpo = f"""<header class="hero">
-  <div class="fundo" style="background-image:url('{capa}')"></div>
-  <div class="wrap">
-    <div class="hero-capa"><img src="{capa}" alt="{esc(l["capa"]["descricao"]) if l.get("capa") else ""}" width="1000" height="1000"><span class="carimbo">{esc(carimbo)} · {l["_data"].year}</span></div>
-    <div>
-      <p class="banda">Demophobia</p>
-      <h1>{esc(l["titulo"])}</h1>
-      <p class="linha">{esc(l["linha_fina"])}</p>
-      <div class="btns">{btn_ouvir}<a class="btn fantasma" href="/discografia/{esc(l["slug"])}/">Sobre o disco</a></div>
-    </div>
+        # 1. banda
+        formacao = "".join(f'<li><span class="n">{esc(p["nome"])}</span><span class="f">{esc(p["funcao"])}</span></li>' for p in b["formacao"])
+        corpo = f"""<header class="topo-banda">
+  <img class="foto" src="{self.m.url(foto["arquivo"], "banda.json")}" alt="{esc(foto["descricao"])}" width="2000" height="1125">
+  <div class="wrap conteudo-topo">
+    <h1>{titulo_topo}</h1>
+    <p class="linha">Metal punk do ABC Paulista.{(" " + esc(frase_vem)) if frase_vem else ""}</p>
+    <div class="btns">{btn_ouvir}<a class="btn fantasma" href="/banda/">Conheça a banda</a></div>
   </div>
 </header>
 <div class="dados"><div class="wrap"><dl>
@@ -590,22 +580,66 @@ class Site:
   <div><dt>Som</dt><dd>Thrash · Death · Punk</dd></div>
   <div><dt>Discografia</dt><dd>{len(a.lancamentos)} lançamentos</dd></div>
 </dl></div></div>
-{self.vitrine()}
-<section class="bloco"><div class="wrap">
-  <div class="topo-bloco"><h2>Próximos shows</h2><a class="ver-tudo" href="/shows/">Agenda e histórico</a></div>
-  {shows}
+<section class="bloco"><div class="wrap cols">
+  <div><p class="kicker">A banda</p><h2>Demophobia?</h2><ul class="formacao">{formacao}</ul></div>
+  <div class="prose"><p class="lead">{esc(b["linha_fina"])}</p>{b["bio_html"].split("</p>")[1] + "</p>" if b["bio_html"].count("</p>") > 1 else ""}
+    <p><a class="ver-tudo" href="/banda/">Bio, trajetória e contato</a></p></div>
+</div></section>"""
+
+        # 2. álbum (destaque, singles, clipes e o que vem)
+        capa = self.capa_de(l)
+        vem_html = ""
+        if vem:
+            vem_html = f'<ol class="linha-tempo" style="margin-top:48px;grid-template-columns:repeat({len(vem)},1fr)">' + "".join(self.item_trajetoria(t) for t in vem) + "</ol>"
+        corpo += f"""<section class="bloco alt"><div class="wrap">
+  <div class="lanc">
+    <a class="capa" href="/discografia/{esc(l["slug"])}/">{self.capa_ou_nome(l, f"lancamentos/{l['slug']}.json")}</a>
+    <div>
+      <p class="kicker">{esc(TIPOS_LANCAMENTO[l["tipo"]])} · {l["_data"].year}</p>
+      <h2>{esc(l["titulo"])}</h2>
+      <p class="lead dim">{esc(l["linha_fina"])}</p>
+      {f'<blockquote class="citacao">{esc(l["citacao"])}</blockquote>' if l.get("citacao") else ""}
+      <div class="btns" style="margin-top:28px">{btn_ouvir}<a class="btn fantasma" href="/discografia/{esc(l["slug"])}/">Faixas e créditos</a></div>
+    </div>
+  </div>
+  {vem_html}
 </div></section>
+{self.vitrine()}
 <section class="bloco alt"><div class="wrap">
   <div class="topo-bloco"><h2>Assista</h2><a class="ver-tudo" href="/videos/">Todos os vídeos</a></div>
   {self.grade_videos(a.videos[:3])}
-</div></section>
-{noticias}
-<section class="bloco"><div class="wrap cols">
-  <div><p class="kicker">A banda</p><h2>Demophobia?</h2></div>
-  <div class="prose"><p class="lead">{esc(b["linha_fina"])}</p><p><a class="ver-tudo" href="/banda/">Conheça a banda</a></p></div>
-</div></section>
-{loja}"""
-        og = self.og.gerar("home", l["titulo"], "Demophobia · " + carimbo, l["capa"]["arquivo"] if l.get("capa") else b["foto"]["arquivo"])
+</div></section>"""
+
+        # 3. shows
+        if a.proximos:
+            shows = '<ul class="shows">' + "".join(self.item_show(s) for s in a.proximos[:4]) + "</ul>"
+        else:
+            shows = f'<p class="vazio">Nenhuma data anunciada agora. Para levar a Demophobia para o seu evento, escreva para <a href="mailto:{esc(email)}">{esc(email)}</a>.</p>'
+        ultimos = ""
+        if a.passados:
+            ultimos = '<h3 style="margin:48px 0 16px;font-size:28px">Últimos shows</h3><ul class="shows">' + "".join(self.item_show(s) for s in a.passados[:3]) + "</ul>"
+        corpo += f"""<section class="bloco"><div class="wrap">
+  <div class="topo-bloco"><h2>Shows</h2><a class="ver-tudo" href="/shows/">Agenda, histórico e cartazes</a></div>
+  {shows}{ultimos}
+</div></section>"""
+
+        # 4. mídia
+        if a.midia or a.noticias:
+            veiculos = sorted({m["veiculo"] for m in a.midia})
+            nomes = "".join(f"<span>{esc(v)}</span>" for v in veiculos)
+            notas = f'<div class="grade" style="margin-top:40px">{"".join(self.cartao_noticia(n) for n in a.noticias[:3])}</div>' if a.noticias else ""
+            corpo += f"""<section class="bloco alt"><div class="wrap">
+  <div class="topo-bloco"><h2>Na mídia</h2><a class="ver-tudo" href="/noticias/">Todas as {len(a.midia)} matérias</a></div>
+  <div class="nomes" style="margin-bottom:32px">{nomes}</div>
+  {self.lista_midia([m for m in a.midia if m["tipo"] != "agenda"][:4], com_resumo=False)}
+  {notas}
+</div></section>"""
+        if a.produtos:
+            corpo += f"""<section class="bloco"><div class="wrap">
+  <div class="topo-bloco"><h2>Loja</h2><a class="ver-tudo" href="/loja/">Ver a loja</a></div>
+  <div class="grade">{"".join(self.cartao_produto(p) for p in a.produtos[:3])}</div>
+</div></section>"""
+        og = self.og.gerar("home", "Metal punk do ABC Paulista", "Demophobia", foto["arquivo"])
         self.pagina("/", "Demophobia", b["linha_fina"], corpo, og=og, ld=[self.ld_banda()])
 
     def vitrine(self) -> str:

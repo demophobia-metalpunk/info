@@ -155,5 +155,13 @@
         "link": "/videos/"
       }
     ]
+  },
+  "logo": {
+    "branco": "imprensa/demophobia-logo-branco.png",
+    "preto": "imprensa/demophobia-logo-preto.png"
+  },
+  "foto_topo": {
+    "arquivo": "banda/banda-trem.jpg",
+    "descricao": "Os quatro integrantes da Demophobia em pé diante de um trem em movimento"
   }
 }
