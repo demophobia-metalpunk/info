@@ -34,3 +34,7 @@ jobs:
           done
           echo "== robots.txt servido"
           curl -sS --max-time 20 https://demophobia.com.br/robots.txt || echo "sem resposta"
+
+      - name: Imagens servidas com versão (?v=)
+        run: |
+          curl -sS --max-time 20 https://demophobia.com.br/ | grep -o 'src="/midias/capas/[^"]*"' | head -3 || echo "sem resposta"

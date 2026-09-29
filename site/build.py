@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import functools
+import hashlib
 import html
 import http.server
 import json
@@ -110,12 +111,18 @@ class Midias:
 
     def __init__(self):
         self.usadas: set[str] = set()
+        self._versao: dict[str, str] = {}
 
     def url(self, relativo: str, origem: str) -> str:
-        if not (MIDIAS / relativo).is_file():
+        """Endereço da mídia com a versão do conteúdo (?v=): trocar o arquivo troca o endereço,
+        então nenhum navegador ou cache segue mostrando a versão antiga."""
+        arquivo = MIDIAS / relativo
+        if not arquivo.is_file():
             raise ErroDeConteudo(f"{origem}: mídia não encontrada em conteudo/midias/{relativo}")
         self.usadas.add(relativo)
-        return "/midias/" + relativo
+        if relativo not in self._versao:
+            self._versao[relativo] = hashlib.sha1(arquivo.read_bytes()).hexdigest()[:10]
+        return f"/midias/{relativo}?v={self._versao[relativo]}"
 
     def existe(self, relativo: str) -> bool:
         return (MIDIAS / relativo).is_file()
@@ -483,7 +490,7 @@ class Site:
 
     def galeria(self, itens: list[dict], classe: str, origem: str) -> str:
         botoes = "".join(
-            f'<button aria-label="Ampliar: {esc(i["descricao"])}"><img src="{self.m.url(i["arquivo"], origem)}" data-grande="/midias/{esc(i["arquivo"])}" alt="{esc(i["descricao"])}" loading="lazy"></button>'
+            f'<button aria-label="Ampliar: {esc(i["descricao"])}"><img src="{self.m.url(i["arquivo"], origem)}" data-grande="{self.m.url(i["arquivo"], origem)}" alt="{esc(i["descricao"])}" loading="lazy"></button>'
             for i in itens)
         return f'<div class="galeria {classe}" data-galeria>{botoes}</div>'
 
@@ -1095,7 +1102,7 @@ class Site:
             self.m.url(d["arquivo"], o)
             with self.og.Image.open(arq) as i:
                 dims = f"{i.width} × {i.height}"
-            downloads += f"""<a class="dl" href="/midias/{esc(d["arquivo"])}" download>
+            downloads += f"""<a class="dl" href="{self.m.url(d["arquivo"], o)}" download>
   <img src="{self.m.url(d["miniatura"], o)}" alt="" loading="lazy">
   <div class="corpo"><div><strong>{esc(d["rotulo"])}</strong><small>JPG · {dims} · {arq.stat().st_size / 1_000_000:.1f} MB</small></div>{self.icone("dl")}</div>
 </a>"""
